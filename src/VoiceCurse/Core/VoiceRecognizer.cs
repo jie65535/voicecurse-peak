@@ -37,9 +37,10 @@ public class VoiceRecognizer : IVoiceRecognizer {
         if (_isRunning) return;
 
         _isRunning = true;
-        _workerThread = new Thread(ProcessAudioLoop);
-        _workerThread.IsBackground = true;
-        _workerThread.Name = "VoiceCurse Worker";
+        _workerThread = new Thread(ProcessAudioLoop) {
+            IsBackground = true,
+            Name = "VoiceCurse Worker"
+        };
         _workerThread.Start();
     }
 
@@ -81,21 +82,22 @@ public class VoiceRecognizer : IVoiceRecognizer {
         if (textIndex == -1) {
             textIndex = json.IndexOf(key + ":", StringComparison.Ordinal);
         }
+        
+        if (textIndex == -1) return;
+        
+        int start = json.IndexOf("\"", textIndex + key.Length + 1, StringComparison.Ordinal) + 1;
+        int end = json.LastIndexOf("\"", StringComparison.Ordinal);
 
-        if (textIndex != -1) {
-            int start = json.IndexOf("\"", textIndex + key.Length + 1, StringComparison.Ordinal) + 1;
-            int end = json.LastIndexOf("\"", StringComparison.Ordinal);
-
-            if (end > start) {
-                string text = json.Substring(start, end - start);
-                if (!string.IsNullOrWhiteSpace(text)) {
-                    if (isPartial) {
-                        OnPartialResult?.Invoke(text);
-                    } else {
-                        OnPhraseRecognized?.Invoke(text);
-                    }
-                }
-            }
+        if (end <= start) return;
+        
+        string text = json.Substring(start, end - start);
+        
+        if (string.IsNullOrWhiteSpace(text)) return;
+        
+        if (isPartial) {
+            OnPartialResult?.Invoke(text);
+        } else {
+            OnPhraseRecognized?.Invoke(text);
         }
     }
 
