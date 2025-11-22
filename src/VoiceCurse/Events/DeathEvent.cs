@@ -35,9 +35,7 @@ public class DeathEvent(VoiceCurseConfig config) : IVoiceEvent {
     }
 
     private void SpawnMilk(Character player) {
-        _cachedMilkItem ??= Resources.FindObjectsOfTypeAll<Item>()
-            .FirstOrDefault(i => i.name.Contains("Milk") || (i.UIData != null && i.UIData.itemName.Contains("Milk")));
-
+        _cachedMilkItem ??= Resources.FindObjectsOfTypeAll<Item>().FirstOrDefault(i => i.name.Contains("Milk") || (i.UIData != null && i.UIData.itemName.Contains("Milk")));
         if (_cachedMilkItem is null) return;
         
         int itemCount = 0;
