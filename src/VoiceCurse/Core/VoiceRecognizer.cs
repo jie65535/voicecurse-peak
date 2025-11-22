@@ -16,17 +16,18 @@ public class VoiceRecognizer : IVoiceRecognizer {
 
     public event Action<string>? OnPhraseRecognized;
     public event Action<string>? OnPartialResult;
-
-    public VoiceRecognizer(string modelPath) {
+    public VoiceRecognizer(string modelPath, float sampleRate) {
         if (!Directory.Exists(modelPath)) {
             throw new DirectoryNotFoundException("Vosk model not found at: " + modelPath);
         }
 
         try {
             _model = new Model(modelPath);
-            _recognizer = new VoskRecognizer(_model, 48000.0f);
+            _recognizer = new VoskRecognizer(_model, sampleRate);
             _recognizer.SetMaxAlternatives(0);
             _recognizer.SetWords(true);
+            
+            Debug.Log($"[VoiceCurse] Initialized Vosk with Sample Rate: {sampleRate} Hz");
         } catch (Exception e) {
             Debug.LogError("Failed to initialize Vosk: " + e.Message);
             throw;

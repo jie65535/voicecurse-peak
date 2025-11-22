@@ -83,7 +83,7 @@ public class VoiceCurseNetworker : IOnEventCallback {
             string prefix = fullWord[..index];
             string match = fullWord.Substring(index, keyword.Length);
             string suffix = fullWord[(index + keyword.Length)..];
-            displayString = $"{prefix}<color=#FF0000><b>{match}</b></color>{suffix}";
+            displayString = $"{prefix}<color=#8B0000>{match}</color>{suffix}";
         }
 
         string finalMessage = $"<color={playerHex}>{playerName} said \"{displayString}\" which triggered </color><color=#FFA500>{eventName}</color>";

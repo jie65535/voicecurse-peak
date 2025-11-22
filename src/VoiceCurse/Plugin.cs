@@ -62,7 +62,11 @@ public partial class Plugin : BaseUnityPlugin {
         }
 
         try {
-            _recognizer = new VoiceRecognizer(modelPath);
+            int systemSampleRate = AudioSettings.outputSampleRate;
+            Log.LogInfo($"Detected System Sample Rate: {systemSampleRate} Hz");
+
+            _recognizer = new VoiceRecognizer(modelPath, systemSampleRate);
+            
             _recognizer.OnPhraseRecognized += (text) => {
                 _lastPartialText = "";
 
@@ -111,11 +115,18 @@ public partial class Plugin : BaseUnityPlugin {
             _tapper.Initialize(_recognizer, muteOutput: true);
         }
         
-        string? deviceName = null; // Uses system default
+        string? deviceName = null;
 
-        Log.LogInfo("Starting Microphone Capture on: System Default");
+        Microphone.GetDeviceCaps(deviceName, out int minFreq, out int maxFreq);
+
+        int targetFreq = 48000;
+        if (maxFreq > 0) {
+            targetFreq = Mathf.Clamp(48000, minFreq, maxFreq);
+        }
+
+        Log.LogInfo($"Starting Microphone Capture on: System Default. Requested Rate: {targetFreq} Hz");
             
-        _micSource.clip = Microphone.Start(deviceName, true, 10, 48000);
+        _micSource.clip = Microphone.Start(deviceName, true, 10, targetFreq);
         _micSource.loop = true;
             
         while (!(Microphone.GetPosition(deviceName) > 0)) { }
