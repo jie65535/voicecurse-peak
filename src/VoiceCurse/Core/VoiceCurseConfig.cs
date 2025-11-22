@@ -2,12 +2,28 @@ using System.Collections.Generic;
 using BepInEx.Configuration;
 
 namespace VoiceCurse.Core {
-    public class VoiceCurseConfig {
-        public ConfigEntry<float> MinAfflictionPercent { get; private set; }
-        public ConfigEntry<float> MaxAfflictionPercent { get; private set; }
-        public ConfigEntry<bool> EnableDebugLogs { get; private set; }
+    public class VoiceCurseConfig(ConfigFile configFile) {
+        public ConfigEntry<float> MinAfflictionPercent { get; private set; } = configFile.Bind(
+            "General",
+            "MinAfflictionPercent",
+            0.2f,
+            "The minimum percentage (0.0 to 1.0) of the status bar to fill when a curse is triggered."
+        );
 
-        // Hardcoded for now, but designed to be expandable later
+        public ConfigEntry<float> MaxAfflictionPercent { get; private set; } = configFile.Bind(
+            "General",
+            "MaxAfflictionPercent",
+            0.6f,
+            "The maximum percentage (0.0 to 1.0) of the status bar to fill when a curse is triggered."
+        );
+
+        public ConfigEntry<bool> EnableDebugLogs { get; private set; } = configFile.Bind(
+            "Debug",
+            "EnableLogs",
+            true,
+            "Enable debug logs for speech detection."
+        );
+
         public readonly Dictionary<string, CharacterAfflictions.STATUSTYPE> Keywords = new() {
             { "damage", CharacterAfflictions.STATUSTYPE.Injury },
             { "hurt", CharacterAfflictions.STATUSTYPE.Injury },
@@ -48,28 +64,5 @@ namespace VoiceCurse.Core {
             { "sleep", CharacterAfflictions.STATUSTYPE.Drowsy },
             { "yawn", CharacterAfflictions.STATUSTYPE.Drowsy }
         };
-
-        public VoiceCurseConfig(ConfigFile configFile) {
-            MinAfflictionPercent = configFile.Bind(
-                "General",
-                "MinAfflictionPercent",
-                0.2f,
-                "The minimum percentage (0.0 to 1.0) of the status bar to fill when a curse is triggered."
-            );
-
-            MaxAfflictionPercent = configFile.Bind(
-                "General",
-                "MaxAfflictionPercent",
-                0.6f,
-                "The maximum percentage (0.0 to 1.0) of the status bar to fill when a curse is triggered."
-            );
-            
-            EnableDebugLogs = configFile.Bind(
-                "Debug",
-                "EnableLogs",
-                true,
-                "Enable debug logs for speech detection."
-            );
-        }
     }
 }
