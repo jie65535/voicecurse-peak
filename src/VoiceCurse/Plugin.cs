@@ -15,7 +15,6 @@ namespace VoiceCurse {
         private VoiceCurseConfig? _config;
         private IVoiceRecognizer? _recognizer;
         private VoiceEventHandler? _eventHandler;
-        
         private AudioStreamTapper? _tapper;
         private AudioSource? _micSource;
         
@@ -44,6 +43,7 @@ namespace VoiceCurse {
                 
                 if (_config != null) {
                     _eventHandler = new VoiceEventHandler(_config, _recognizer);
+                    Log.LogInfo("Event Handler Initialized.");
                 }
 
                 Log.LogInfo("Voice Recognizer started successfully.");

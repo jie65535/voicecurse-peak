@@ -22,7 +22,7 @@ namespace VoiceCurse.Core {
             if (string.IsNullOrWhiteSpace(text)) return;
 
             string lowerText = text.ToLowerInvariant();
-            
+
             foreach (IVoiceEvent? evt in _events) {
                 evt.TryExecute(lowerText, lowerText);
             }

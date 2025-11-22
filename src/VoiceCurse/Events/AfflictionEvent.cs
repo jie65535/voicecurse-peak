@@ -11,7 +11,7 @@ namespace VoiceCurse.Events {
             if (!config.Keywords.TryGetValue(spokenWord, out CharacterAfflictions.STATUSTYPE statusType)) {
                 return false;
             }
-
+            
             if (_cooldowns.TryGetValue(statusType, out float lastTime)) {
                 if (Time.time - lastTime < CooldownSeconds) {
                     return false;
@@ -19,12 +19,12 @@ namespace VoiceCurse.Events {
             }
             
             Character localChar = Character.localCharacter;
-            if (localChar?.refs == null || localChar.refs.afflictions == null) {
+            if (localChar is null || localChar.refs == null || localChar.refs.afflictions == null) {
                 return false;
             }
 
             if (localChar.data.dead || localChar.data.fullyPassedOut) return false;
-
+            
             float min = config.MinAfflictionPercent.Value;
             float max = config.MaxAfflictionPercent.Value;
             float amount = Random.Range(min, max);
@@ -32,10 +32,10 @@ namespace VoiceCurse.Events {
             if (config.EnableDebugLogs.Value) {
                 Debug.Log($"[VoiceCurse] Affliction: {statusType} ({amount:P0}) triggered by '{spokenWord}'");
             }
-
+            
             localChar.refs.afflictions.AddStatus(statusType, amount);
+            
             _cooldowns[statusType] = Time.time;
-
             return true;
         }
     }
