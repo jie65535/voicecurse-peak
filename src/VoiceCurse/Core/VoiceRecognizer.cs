@@ -21,7 +21,7 @@ namespace VoiceCurse.Core {
                 throw new DirectoryNotFoundException("Vosk model not found at: " + modelPath);
             }
 
-            Vosk.Vosk.SetLogLevel(-1);
+            // Vosk.Vosk.SetLogLevel(0); // Enable if you need deep debugging
 
             try {
                 _model = new Model(modelPath);
@@ -75,25 +75,26 @@ namespace VoiceCurse.Core {
 
         private void ExtractAndFire(string json, bool isPartial) {
             if (string.IsNullOrEmpty(json)) return;
-            string key = isPartial ? "\"partial\"" : "\"text\"";
-            
-            int keyIndex = json.IndexOf(key, StringComparison.Ordinal);
-            if (keyIndex == -1) return;
-            int colonIndex = json.IndexOf(':', keyIndex + key.Length);
-            if (colonIndex == -1) return;
-            int startQuote = json.IndexOf('"', colonIndex);
-            if (startQuote == -1) return;
-            int endQuote = json.IndexOf('"', startQuote + 1);
-            if (endQuote == -1) return;
 
-            if (endQuote > startQuote + 1) {
-                string text = json.Substring(startQuote + 1, endQuote - startQuote - 1);
-                
-                if (!string.IsNullOrWhiteSpace(text)) {
-                    if (isPartial) {
-                        OnPartialResult?.Invoke(text);
-                    } else {
-                        OnPhraseRecognized?.Invoke(text);
+            string key = isPartial ? "\"partial\"" : "\"text\"";
+            int textIndex = json.IndexOf(key + " :", StringComparison.Ordinal);
+            
+            if (textIndex == -1) {
+                textIndex = json.IndexOf(key + ":", StringComparison.Ordinal);
+            }
+
+            if (textIndex != -1) {
+                int start = json.IndexOf("\"", textIndex + key.Length + 1, StringComparison.Ordinal) + 1;
+                int end = json.LastIndexOf("\"", StringComparison.Ordinal);
+
+                if (end > start) {
+                    string text = json.Substring(start, end - start);
+                    if (!string.IsNullOrWhiteSpace(text)) {
+                        if (isPartial) {
+                            OnPartialResult?.Invoke(text);
+                        } else {
+                            OnPhraseRecognized?.Invoke(text);
+                        }
                     }
                 }
             }

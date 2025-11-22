@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
-using System.Linq;
 using BepInEx;
 using BepInEx.Logging;
 using UnityEngine;
@@ -28,7 +27,7 @@ public partial class Plugin : BaseUnityPlugin {
         Log.LogInfo($"Plugin {Name} is loading...");
             
         _config = new VoiceCurseConfig(Config);
-            
+
         if (_config != null) {
             _eventHandler = new VoiceEventHandler(_config);
         }
@@ -51,17 +50,21 @@ public partial class Plugin : BaseUnityPlugin {
                 _mainThreadActions.Enqueue(() => {
                     Log.LogInfo($"[Recognized]: {text}");
                     _lastPartialText = ""; 
-                    _eventHandler?.HandleSpeech(text);
+                    
+                    if (_eventHandler == null) {
+                        Log.LogError("Event Handler is null! Cannot execute events.");
+                    } else {
+                        _eventHandler.HandleSpeech(text);
+                    }
                 });
             };
-
+            
             _recognizer.OnPartialResult += (text) => {
                 if (string.IsNullOrWhiteSpace(text) || text == _lastPartialText || text.Length < 2) return;
-                
-                string capturedText = text; 
+                string captured = text;
                 _mainThreadActions.Enqueue(() => {
-                    _lastPartialText = capturedText;
-                    Log.LogInfo($"[Partial]: {capturedText}"); 
+                    _lastPartialText = captured;
+                    Log.LogInfo($"[Partial]: {captured}"); 
                 });
             };
 
@@ -83,7 +86,7 @@ public partial class Plugin : BaseUnityPlugin {
     }
 
     private void SetupMicrophone() {
-        GameObject micObj = new("VoiceCurse_Mic");
+        GameObject micObj = new GameObject("VoiceCurse_Mic");
         DontDestroyOnLoad(micObj);
             
         _micSource = micObj.AddComponent<AudioSource>();
@@ -93,9 +96,8 @@ public partial class Plugin : BaseUnityPlugin {
             _tapper.Initialize(_recognizer, muteOutput: true);
         }
         
-        string? deviceName = Microphone.devices.FirstOrDefault(d => d.Contains("Yeti") || d.Contains("Analog"));
-
-        Log.LogInfo($"Starting Microphone Capture on: {deviceName ?? "System Default"}");
+        string? deviceName = null;
+        Log.LogInfo("Starting Microphone Capture on: System Default");
             
         _micSource.clip = Microphone.Start(deviceName, true, 10, 48000);
         _micSource.loop = true;
