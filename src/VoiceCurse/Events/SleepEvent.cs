@@ -18,8 +18,8 @@ public class SleepEvent(VoiceCurseConfig config) : IVoiceEvent {
         if (config.EnableDebugLogs.Value) {
             Debug.Log($"[VoiceCurse] Fainting triggered by phrase: '{fullSentence}'");
         }
-            
-        localChar.photonView.RPC("RPCA_PassOut", RpcTarget.All, localChar.Center);
+        
+        localChar.PassOutInstantly();
         return true;
     }
 }
