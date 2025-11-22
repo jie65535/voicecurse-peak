@@ -1,94 +1,112 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
 using BepInEx;
 using BepInEx.Logging;
 using UnityEngine;
 using VoiceCurse.Core;
 using VoiceCurse.Audio;
 
-namespace VoiceCurse {
-    [BepInAutoPlugin]
-    public partial class Plugin : BaseUnityPlugin {
-        internal static ManualLogSource Log { get; set; } = null!;
-        
-        private VoiceCurseConfig? _config;
-        private IVoiceRecognizer? _recognizer;
-        private VoiceEventHandler? _eventHandler;
-        private AudioStreamTapper? _tapper;
-        private AudioSource? _micSource;
-        
-        private readonly ConcurrentQueue<Action> _mainThreadActions = new();
+namespace VoiceCurse;
 
-        private void Awake() {
-            Log = Logger;
-            Log.LogInfo($"Plugin {Name} is loading...");
+[BepInAutoPlugin]
+public partial class Plugin : BaseUnityPlugin {
+    internal static ManualLogSource Log { get; set; } = null!;
+        
+    private VoiceCurseConfig? _config;
+    private IVoiceRecognizer? _recognizer;
+    private VoiceEventHandler? _eventHandler;
+    private AudioStreamTapper? _tapper;
+    private AudioSource? _micSource;
+        
+    private readonly ConcurrentQueue<Action> _mainThreadActions = new();
+    private string _lastPartialText = "";
+
+    private void Awake() {
+        Log = Logger;
+        Log.LogInfo($"Plugin {Name} is loading...");
             
-            _config = new VoiceCurseConfig(Config);
+        _config = new VoiceCurseConfig(Config);
             
-            SetupVoiceRecognition();
+        if (_config != null) {
+            _eventHandler = new VoiceEventHandler(_config);
         }
 
-        private void SetupVoiceRecognition() {
-            string modelPath = Path.Combine(Paths.PluginPath, "VoiceCurse", "model-en-us");
+        SetupVoiceRecognition();
+    }
 
-            if (!Directory.Exists(modelPath)) {
-                Log.LogError($"Vosk model not found! Please create folder: {modelPath}");
-                return;
-            }
+    private void SetupVoiceRecognition() {
+        string modelPath = Path.Combine(Paths.PluginPath, "VoiceCurse", "model-en-us");
 
-            try {
-                _recognizer = new VoiceRecognizer(modelPath);
-                _recognizer.Start();
+        if (!Directory.Exists(modelPath)) {
+            Log.LogError($"Vosk model not found! Please create folder: {modelPath}");
+            return;
+        }
+
+        try {
+            _recognizer = new VoiceRecognizer(modelPath);
+            
+            _recognizer.OnPhraseRecognized += (text) => {
+                _mainThreadActions.Enqueue(() => {
+                    Log.LogInfo($"[Recognized]: {text}");
+                    _lastPartialText = ""; 
+                    _eventHandler?.HandleSpeech(text);
+                });
+            };
+
+            _recognizer.OnPartialResult += (text) => {
+                if (string.IsNullOrWhiteSpace(text) || text == _lastPartialText || text.Length < 2) return;
                 
-                if (_config != null) {
-                    _eventHandler = new VoiceEventHandler(_config, _recognizer);
-                    Log.LogInfo("Event Handler Initialized.");
-                }
+                string capturedText = text; 
+                _mainThreadActions.Enqueue(() => {
+                    _lastPartialText = capturedText;
+                    Log.LogInfo($"[Partial]: {capturedText}"); 
+                });
+            };
 
-                Log.LogInfo("Voice Recognizer started successfully.");
-            } catch (Exception ex) {
-                Log.LogError($"Failed to start Voice Recognizer: {ex.Message}");
-            }
+            _recognizer.Start();
+            Log.LogInfo("Voice Recognizer started successfully.");
+        } catch (Exception ex) {
+            Log.LogError($"Failed to start Voice Recognizer: {ex.Message}");
         }
+    }
 
-        private void Update() {
-            while (_mainThreadActions.TryDequeue(out Action action)) {
-                action.Invoke();
-            }
-            
-            _recognizer?.Update();
-
-            if (_micSource is null && _recognizer != null) {
-                SetupMicrophone();
-            }
+    private void Update() {
+        while (_mainThreadActions.TryDequeue(out Action action)) {
+            action.Invoke();
         }
-
-        private void SetupMicrophone() {
-            GameObject micObj = new GameObject("VoiceCurse_Mic");
-            DontDestroyOnLoad(micObj);
-            
-            _micSource = micObj.AddComponent<AudioSource>();
-            _tapper = micObj.AddComponent<AudioStreamTapper>();
-            
-            if (_recognizer != null) {
-                _tapper.Initialize(_recognizer, muteOutput: true);
-            }
-
-            Log.LogInfo("Starting Microphone Capture...");
-            
-            _micSource.clip = Microphone.Start(null, true, 10, 48000);
-            _micSource.loop = true;
-            
-            while (!(Microphone.GetPosition(null) > 0)) { }
-            
-            _micSource.Play();
+        
+        if (_micSource is null && _recognizer != null) {
+            SetupMicrophone();
         }
+    }
 
-        private void OnDestroy() {
-            _eventHandler?.Dispose();
-            _recognizer?.Stop();
-            _recognizer?.Dispose();
+    private void SetupMicrophone() {
+        GameObject micObj = new("VoiceCurse_Mic");
+        DontDestroyOnLoad(micObj);
+            
+        _micSource = micObj.AddComponent<AudioSource>();
+        _tapper = micObj.AddComponent<AudioStreamTapper>();
+            
+        if (_recognizer != null) {
+            _tapper.Initialize(_recognizer, muteOutput: true);
         }
+        
+        string? deviceName = Microphone.devices.FirstOrDefault(d => d.Contains("Yeti") || d.Contains("Analog"));
+
+        Log.LogInfo($"Starting Microphone Capture on: {deviceName ?? "System Default"}");
+            
+        _micSource.clip = Microphone.Start(deviceName, true, 10, 48000);
+        _micSource.loop = true;
+        
+        while (!(Microphone.GetPosition(deviceName) > 0)) { }
+            
+        _micSource.Play();
+    }
+
+    private void OnDestroy() {
+        _recognizer?.Stop();
+        _recognizer?.Dispose();
     }
 }

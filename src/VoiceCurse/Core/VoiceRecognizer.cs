@@ -10,8 +10,6 @@ namespace VoiceCurse.Core {
         private readonly Model _model;
         private readonly VoskRecognizer _recognizer;
         private readonly ConcurrentQueue<short[]> _audioQueue = new();
-        private readonly ConcurrentQueue<(string text, bool isPartial)> _resultQueue = new();
-        
         private Thread? _workerThread;
         private volatile bool _isRunning;
 
@@ -23,6 +21,8 @@ namespace VoiceCurse.Core {
                 throw new DirectoryNotFoundException("Vosk model not found at: " + modelPath);
             }
 
+            Vosk.Vosk.SetLogLevel(-1);
+
             try {
                 _model = new Model(modelPath);
                 _recognizer = new VoskRecognizer(_model, 48000.0f);
@@ -31,16 +31,6 @@ namespace VoiceCurse.Core {
             } catch (Exception e) {
                 Debug.LogError("Failed to initialize Vosk: " + e.Message);
                 throw;
-            }
-        }
-
-        public void Update() {
-            while (_resultQueue.TryDequeue(out (string text, bool isPartial) result)) {
-                if (result.isPartial) {
-                    OnPartialResult?.Invoke(result.text);
-                } else {
-                    OnPhraseRecognized?.Invoke(result.text);
-                }
             }
         }
 
@@ -72,38 +62,39 @@ namespace VoiceCurse.Core {
                 if (_audioQueue.TryDequeue(out short[] data)) {
                     if (_recognizer.AcceptWaveform(data, data.Length)) {
                         string jsonResult = _recognizer.Result();
-                        ExtractAndQueue(jsonResult, isPartial: false);
+                        ExtractAndFire(jsonResult, isPartial: false);
                     } else {
                         string partialJson = _recognizer.PartialResult();
-                        ExtractAndQueue(partialJson, isPartial: true);
+                        ExtractAndFire(partialJson, isPartial: true);
                     }
                 } else {
                     Thread.Sleep(10);
                 }
             }
         }
-        
-        private void ExtractAndQueue(string json, bool isPartial) {
+
+        private void ExtractAndFire(string json, bool isPartial) {
             if (string.IsNullOrEmpty(json)) return;
-            
             string key = isPartial ? "\"partial\"" : "\"text\"";
             
             int keyIndex = json.IndexOf(key, StringComparison.Ordinal);
             if (keyIndex == -1) return;
-            
             int colonIndex = json.IndexOf(':', keyIndex + key.Length);
             if (colonIndex == -1) return;
-            
             int startQuote = json.IndexOf('"', colonIndex);
             if (startQuote == -1) return;
-            
             int endQuote = json.IndexOf('"', startQuote + 1);
             if (endQuote == -1) return;
 
             if (endQuote > startQuote + 1) {
                 string text = json.Substring(startQuote + 1, endQuote - startQuote - 1);
+                
                 if (!string.IsNullOrWhiteSpace(text)) {
-                    _resultQueue.Enqueue((text, isPartial));
+                    if (isPartial) {
+                        OnPartialResult?.Invoke(text);
+                    } else {
+                        OnPhraseRecognized?.Invoke(text);
+                    }
                 }
             }
         }
