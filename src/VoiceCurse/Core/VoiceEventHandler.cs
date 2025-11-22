@@ -4,10 +4,11 @@ using VoiceCurse.Events;
 namespace VoiceCurse.Core;
 
 public class VoiceEventHandler(VoiceCurseConfig config) {
-    private readonly List<IVoiceEvent> _events = new() {
+    private readonly List<IVoiceEvent> _events = [
         new DeathEvent(config),
-        new AfflictionEvent(config)
-    };
+        new AfflictionEvent(config),
+        new SleepEvent(config)
+    ];
         
     private readonly Dictionary<string, int> _previousWordCounts = new();
 
@@ -15,7 +16,7 @@ public class VoiceEventHandler(VoiceCurseConfig config) {
         if (string.IsNullOrWhiteSpace(text)) return;
 
         string lowerText = text.ToLowerInvariant();
-        string[] words = lowerText.Split(new[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
+        string[] words = lowerText.Split([' '], System.StringSplitOptions.RemoveEmptyEntries);
         Dictionary<string, int> currentCounts = new();
             
         foreach (string w in words) {
@@ -23,10 +24,7 @@ public class VoiceEventHandler(VoiceCurseConfig config) {
             currentCounts[w]++;
         }
 
-        foreach (KeyValuePair<string, int> kvp in currentCounts) {
-            string word = kvp.Key;
-            int count = kvp.Value;
-                
+        foreach ((string? word, int count) in currentCounts) {
             int previousCount = 0;
             if (_previousWordCounts.TryGetValue(word, out int prev)) {
                 previousCount = prev;
