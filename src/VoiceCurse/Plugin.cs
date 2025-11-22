@@ -20,14 +20,14 @@ public partial class Plugin : BaseUnityPlugin {
     private AudioSource? _micSource;
         
     private readonly ConcurrentQueue<Action> _mainThreadActions = new();
-    private string _lastPartialText = "";
+
+    private volatile string _lastPartialText = "";
 
     private void Awake() {
         Log = Logger;
         Log.LogInfo($"Plugin {Name} is loading...");
             
         _config = new VoiceCurseConfig(Config);
-
         if (_config != null) {
             _eventHandler = new VoiceEventHandler(_config);
         }
@@ -50,21 +50,18 @@ public partial class Plugin : BaseUnityPlugin {
                 _mainThreadActions.Enqueue(() => {
                     Log.LogInfo($"[Recognized]: {text}");
                     _lastPartialText = ""; 
-                    
-                    if (_eventHandler == null) {
-                        Log.LogError("Event Handler is null! Cannot execute events.");
-                    } else {
-                        _eventHandler.HandleSpeech(text);
-                    }
+                    _eventHandler?.HandleSpeech(text);
                 });
             };
-            
+
             _recognizer.OnPartialResult += (text) => {
                 if (string.IsNullOrWhiteSpace(text) || text == _lastPartialText || text.Length < 2) return;
-                string captured = text;
+                _lastPartialText = text;
+
+                string captured = text; 
                 _mainThreadActions.Enqueue(() => {
-                    _lastPartialText = captured;
                     Log.LogInfo($"[Partial]: {captured}"); 
+                    _eventHandler?.HandleSpeech(captured); 
                 });
             };
 
@@ -79,7 +76,7 @@ public partial class Plugin : BaseUnityPlugin {
         while (_mainThreadActions.TryDequeue(out Action action)) {
             action.Invoke();
         }
-        
+
         if (_micSource is null && _recognizer != null) {
             SetupMicrophone();
         }
@@ -96,12 +93,12 @@ public partial class Plugin : BaseUnityPlugin {
             _tapper.Initialize(_recognizer, muteOutput: true);
         }
         
-        string? deviceName = null;
+        string? deviceName = null; 
         Log.LogInfo("Starting Microphone Capture on: System Default");
             
         _micSource.clip = Microphone.Start(deviceName, true, 10, 48000);
         _micSource.loop = true;
-        
+            
         while (!(Microphone.GetPosition(deviceName) > 0)) { }
             
         _micSource.Play();

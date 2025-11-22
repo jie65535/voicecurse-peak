@@ -1,20 +1,25 @@
 using System.Collections.Generic;
 using VoiceCurse.Events;
 
-namespace VoiceCurse.Core;
+namespace VoiceCurse.Core {
+    public class VoiceEventHandler(VoiceCurseConfig config) {
+        private readonly List<IVoiceEvent> _events = new() {
+            new InstantDeathEvent(config),
+            new AfflictionEvent(config)
+        };
 
-public class VoiceEventHandler(VoiceCurseConfig config) {
-    private readonly List<IVoiceEvent> _events = new() {
-        new InstantDeathEvent(config),
-        new AfflictionEvent(config)
-    };
+        public void HandleSpeech(string text) {
+            if (string.IsNullOrWhiteSpace(text)) return;
 
-    public void HandleSpeech(string text) {
-        if (string.IsNullOrWhiteSpace(text)) return;
+            string lowerText = text.ToLowerInvariant();
+            
+            string[] words = lowerText.Split(' ');
 
-        string lowerText = text.ToLowerInvariant();
-        foreach (IVoiceEvent evt in _events) {
-            evt.TryExecute(lowerText, lowerText);
+            foreach (IVoiceEvent evt in _events) {
+                foreach(string word in words) {
+                    evt.TryExecute(word, lowerText);
+                }
+            }
         }
     }
 }
