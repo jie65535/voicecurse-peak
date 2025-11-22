@@ -5,4 +5,7 @@
     <AssemblyTitle>VoiceCurse</AssemblyTitle>
     <Version>0.1.0</Version>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Vosk" Version="0.3.38" />
+  </ItemGroup>
 </Project>
