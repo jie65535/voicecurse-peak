@@ -7,7 +7,7 @@ namespace VoiceCurse.Events;
 
 public class AfflictionEvent(VoiceCurseConfig config) : IVoiceEvent {
     private static readonly Dictionary<CharacterAfflictions.STATUSTYPE, string[]> WordGroups = new() {
-        { CharacterAfflictions.STATUSTYPE.Injury, ["damage", "hurt", "injury", "injured", "pain", "ow"] },
+        { CharacterAfflictions.STATUSTYPE.Injury, ["damage", "hurt", "injury", "injured", "pain"] },
         { CharacterAfflictions.STATUSTYPE.Hunger, ["hunger", "hungry", "starving", "starve", "food"] },
         { CharacterAfflictions.STATUSTYPE.Cold,   ["freezing", "cold", "blizzard", "shiver", "ice"] },
         { CharacterAfflictions.STATUSTYPE.Hot,    ["hot", "burning", "fire", "melt"] },
@@ -20,9 +20,10 @@ public class AfflictionEvent(VoiceCurseConfig config) : IVoiceEvent {
     // Thank you, LINQ, very cool.
 
     public bool TryExecute(string spokenWord, string fullSentence) {
-        if (!_keywords.TryGetValue(spokenWord, out CharacterAfflictions.STATUSTYPE statusType)) {
-            return false;
-        }
+        KeyValuePair<string, CharacterAfflictions.STATUSTYPE> matchedKeyword = _keywords.FirstOrDefault(kvp => spokenWord.Contains(kvp.Key));
+        if (matchedKeyword.Key == null) return false;
+        
+        CharacterAfflictions.STATUSTYPE statusType = matchedKeyword.Value;
         
         Character localChar = Character.localCharacter;
         if (localChar?.refs?.afflictions is null) return false;

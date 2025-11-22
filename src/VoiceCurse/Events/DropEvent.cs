@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Photon.Pun;
 using UnityEngine;
 using VoiceCurse.Core;
@@ -13,7 +14,8 @@ public class DropEvent(VoiceCurseConfig config) : IVoiceEvent {
     ];
 
     public bool TryExecute(string spokenWord, string fullSentence) {
-        if (!_keywords.Contains(spokenWord)) return false;
+        string? matchedKeyword = _keywords.FirstOrDefault(spokenWord.Contains);
+        if (matchedKeyword == null) return false;
 
         Character localChar = Character.localCharacter;
         if (localChar is null || localChar.data.dead) return false;

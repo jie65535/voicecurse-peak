@@ -10,12 +10,14 @@ public class ExplodeEvent(VoiceCurseConfig config) : IVoiceEvent {
     private readonly HashSet<string> _keywords = [
         "explosion", "dynamite", "grenade", "explodes", "explode", 
         "blowing", "blew", "blow", "boom", "nuke", "bomb", "bombs", 
-        "nuclear", "detonate", "detonation"];
+        "nuclear", "detonate", "detonation"
+    ];
         
     private static GameObject? _cachedExplosionPrefab;
 
     public bool TryExecute(string spokenWord, string fullSentence) {
-        if (!_keywords.Contains(spokenWord)) return false;
+        string? matchedKeyword = _keywords.FirstOrDefault(spokenWord.Contains);
+        if (matchedKeyword == null) return false;
 
         Character localChar = Character.localCharacter;
         if (localChar is null || localChar.data.dead) return false;

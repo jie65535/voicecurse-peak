@@ -7,7 +7,7 @@ using VoiceCurse.Core;
 namespace VoiceCurse.Events;
 
 public class DeathEvent(VoiceCurseConfig config) : IVoiceEvent {
-    private readonly HashSet<string> _triggerWords = [
+    private readonly HashSet<string> _keywords = [
         "die", "death", "dead", "suicide", "kill", "deceased", "skeleton", 
         "skull", "calcium", "bones", "bone", "perish", "demise", "expire", 
         "expired", "fatal", "mortality", "mortal", "milk"];
@@ -15,8 +15,8 @@ public class DeathEvent(VoiceCurseConfig config) : IVoiceEvent {
     private static Item? _cachedMilkItem;
 
     public bool TryExecute(string spokenWord, string fullSentence) {
-        bool match = _triggerWords.Any(fullSentence.Contains);
-        if (!match) return false;
+        string? matchedKeyword = _keywords.FirstOrDefault(spokenWord.Contains);
+        if (matchedKeyword == null) return false;
         
         Character localChar = Character.localCharacter;
         if (localChar is null || localChar.data.dead) return false;

@@ -13,7 +13,8 @@ public class LaunchEvent(VoiceCurseConfig config) : IVoiceEvent {
     private static GameObject? _cachedLaunchSFX;
 
     public bool TryExecute(string spokenWord, string fullSentence) {
-        if (!_keywords.Contains(spokenWord)) return false;
+        string? matchedKeyword = _keywords.FirstOrDefault(spokenWord.Contains);
+        if (matchedKeyword == null) return false;
 
         Character localChar = Character.localCharacter;
         if (localChar is null || localChar.data.dead || localChar.data.fullyPassedOut) return false;

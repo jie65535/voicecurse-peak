@@ -6,11 +6,12 @@ using VoiceCurse.Core;
 namespace VoiceCurse.Events;
 
 public class SleepEvent(VoiceCurseConfig config) : IVoiceEvent {
-    private readonly HashSet<string> _triggerWords = ["faint", "sleep", "exhausted", "sleepy", "tired", "bed"];
+    private readonly HashSet<string> _keywords = ["faint", "sleep", "exhausted", "sleepy", "tired", "bed"];
     
     public bool TryExecute(string spokenWord, string fullSentence) {
-        bool match = _triggerWords.Any(fullSentence.Contains);
-        if (!match) return false;
+        string? matchedKeyword = _keywords.FirstOrDefault(spokenWord.Contains);
+        if (matchedKeyword == null) return false;
+        
         Character localChar = Character.localCharacter;
         if (localChar is null || localChar.data.passedOut || localChar.data.dead) return false;
 
