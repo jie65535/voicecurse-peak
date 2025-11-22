@@ -35,13 +35,12 @@ public class LaunchEvent(VoiceCurseConfig config) : IVoiceEvent {
         float launchForce = Random.Range(1500f, 3000f); 
         Vector3 finalForce = launchDirection * launchForce;
         localChar.AddForce(finalForce);
-        
-        if (_cachedLaunchSFX is not null) {
-            GameObject sfx = Object.Instantiate(_cachedLaunchSFX, localChar.Center, Quaternion.identity);
-            sfx.SetActive(true);
+
+        if (_cachedLaunchSFX is null) return true;
+        GameObject sfx = Object.Instantiate(_cachedLaunchSFX, localChar.Center, Quaternion.identity);
+        sfx.SetActive(true);
             
-            Object.Destroy(sfx, 5f);
-        }
+        Object.Destroy(sfx, 5f);
 
         return true;
     }
