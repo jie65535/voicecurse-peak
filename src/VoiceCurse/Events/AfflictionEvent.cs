@@ -1,49 +1,22 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using VoiceCurse.Core;
 
 namespace VoiceCurse.Events {
     public class AfflictionEvent(VoiceCurseConfig config) : IVoiceEvent {
-        private readonly Dictionary<string, CharacterAfflictions.STATUSTYPE> _keywords = new() {
-            { "damage", CharacterAfflictions.STATUSTYPE.Injury },
-            { "hurt", CharacterAfflictions.STATUSTYPE.Injury },
-            { "injury", CharacterAfflictions.STATUSTYPE.Injury },
-            { "injured", CharacterAfflictions.STATUSTYPE.Injury },
-            { "pain", CharacterAfflictions.STATUSTYPE.Injury },
-            { "ow", CharacterAfflictions.STATUSTYPE.Injury },
-            
-            { "hunger", CharacterAfflictions.STATUSTYPE.Hunger },
-            { "hungry", CharacterAfflictions.STATUSTYPE.Hunger },
-            { "starving", CharacterAfflictions.STATUSTYPE.Hunger },
-            { "starve", CharacterAfflictions.STATUSTYPE.Hunger },
-            { "food", CharacterAfflictions.STATUSTYPE.Hunger },
-            
-            { "freezing", CharacterAfflictions.STATUSTYPE.Cold },
-            { "cold", CharacterAfflictions.STATUSTYPE.Cold },
-            { "blizzard", CharacterAfflictions.STATUSTYPE.Cold },
-            { "shiver", CharacterAfflictions.STATUSTYPE.Cold },
-            { "ice", CharacterAfflictions.STATUSTYPE.Cold },
-            
-            { "hot", CharacterAfflictions.STATUSTYPE.Hot },
-            { "burning", CharacterAfflictions.STATUSTYPE.Hot },
-            { "fire", CharacterAfflictions.STATUSTYPE.Hot },
-            { "melt", CharacterAfflictions.STATUSTYPE.Hot },
-            
-            { "poison", CharacterAfflictions.STATUSTYPE.Poison },
-            { "sick", CharacterAfflictions.STATUSTYPE.Poison },
-            { "vomit", CharacterAfflictions.STATUSTYPE.Poison },
-            { "toxic", CharacterAfflictions.STATUSTYPE.Poison },
-            
-            { "spores", CharacterAfflictions.STATUSTYPE.Spores },
-            { "fungus", CharacterAfflictions.STATUSTYPE.Spores },
-            { "mushroom", CharacterAfflictions.STATUSTYPE.Spores },
-            { "cough", CharacterAfflictions.STATUSTYPE.Spores },
-            
-            { "tired", CharacterAfflictions.STATUSTYPE.Drowsy },
-            { "sleepy", CharacterAfflictions.STATUSTYPE.Drowsy },
-            { "sleep", CharacterAfflictions.STATUSTYPE.Drowsy },
-            { "yawn", CharacterAfflictions.STATUSTYPE.Drowsy }
+        private static readonly Dictionary<CharacterAfflictions.STATUSTYPE, string[]> WordGroups = new() {
+            { CharacterAfflictions.STATUSTYPE.Injury, ["damage", "hurt", "injury", "injured", "pain", "ow"] },
+            { CharacterAfflictions.STATUSTYPE.Hunger, ["hunger", "hungry", "starving", "starve", "food"] },
+            { CharacterAfflictions.STATUSTYPE.Cold,   ["freezing", "cold", "blizzard", "shiver", "ice"] },
+            { CharacterAfflictions.STATUSTYPE.Hot,    ["hot", "burning", "fire", "melt"] },
+            { CharacterAfflictions.STATUSTYPE.Poison, ["poison", "sick", "vomit", "toxic"] },
+            { CharacterAfflictions.STATUSTYPE.Spores, ["spores", "fungus", "mushroom"] },
+            { CharacterAfflictions.STATUSTYPE.Drowsy, ["tired", "sleepy", "sleep", "yawn"] }
         };
+        
+        private readonly Dictionary<string, CharacterAfflictions.STATUSTYPE> _keywords = 
+            WordGroups.SelectMany(g => g.Value.Select(w => (Word: w, Type: g.Key))).ToDictionary(x => x.Word, x => x.Type); // WTF
 
         public bool TryExecute(string spokenWord, string fullSentence) {
             if (!_keywords.TryGetValue(spokenWord, out CharacterAfflictions.STATUSTYPE statusType)) {
@@ -51,15 +24,10 @@ namespace VoiceCurse.Events {
             }
             
             Character localChar = Character.localCharacter;
-            if (localChar?.refs?.afflictions is null) {
-                return false;
-            }
-
+            if (localChar?.refs?.afflictions == null) return false;
             if (localChar.data.dead || localChar.data.fullyPassedOut) return false;
             
-            float min = config.MinAfflictionPercent.Value;
-            float max = config.MaxAfflictionPercent.Value;
-            float amount = Random.Range(min, max);
+            float amount = Random.Range(config.MinAfflictionPercent.Value, config.MaxAfflictionPercent.Value);
 
             if (config.EnableDebugLogs.Value) {
                 Debug.Log($"[VoiceCurse] Affliction: {statusType} ({amount:P0}) triggered by '{spokenWord}'");
