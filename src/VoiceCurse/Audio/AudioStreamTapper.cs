@@ -31,14 +31,11 @@ public class AudioStreamTapper : MonoBehaviour {
             }
             sample /= channels;
 
-            switch (sample) {
-                case > 1.0f:
-                    sample = 1.0f;
-                    break;
-                case < -1.0f:
-                    sample = -1.0f;
-                    break;
-            }
+            sample = sample switch {
+                > 1.0f => 1.0f,
+                < -1.0f => -1.0f,
+                _ => sample
+            };
 
             pcmBuffer[i] = (short)(sample * 32767);
         }
