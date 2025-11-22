@@ -33,7 +33,7 @@ namespace VoiceCurse.Core {
                 throw;
             }
         }
-        
+
         public void Update() {
             while (_resultQueue.TryDequeue(out (string text, bool isPartial) result)) {
                 if (result.isPartial) {
@@ -46,6 +46,7 @@ namespace VoiceCurse.Core {
 
         public void Start() {
             if (_isRunning) return;
+
             _isRunning = true;
             _workerThread = new Thread(ProcessAudioLoop);
             _workerThread.IsBackground = true;
@@ -90,21 +91,17 @@ namespace VoiceCurse.Core {
             int keyIndex = json.IndexOf(key, StringComparison.Ordinal);
             if (keyIndex == -1) return;
             
-            int startQuote = json.IndexOf("\"", keyIndex + key.Length, StringComparison.Ordinal);
-            while (startQuote != -1 && (json[startQuote-1] == '\\' || json[startQuote+1] == ':')) {
-                 startQuote = json.IndexOf("\"", startQuote + 1, StringComparison.Ordinal);
-            }
-            
-            int colonIndex = json.IndexOf(':', keyIndex);
+            int colonIndex = json.IndexOf(':', keyIndex + key.Length);
             if (colonIndex == -1) return;
             
-            int start = json.IndexOf('"', colonIndex) + 1;
-            if (start == 0) return;
+            int startQuote = json.IndexOf('"', colonIndex);
+            if (startQuote == -1) return;
             
-            int end = json.IndexOf('"', start);
-            
-            if (end > start) {
-                string text = json.Substring(start, end - start);
+            int endQuote = json.IndexOf('"', startQuote + 1);
+            if (endQuote == -1) return;
+
+            if (endQuote > startQuote + 1) {
+                string text = json.Substring(startQuote + 1, endQuote - startQuote - 1);
                 if (!string.IsNullOrWhiteSpace(text)) {
                     _resultQueue.Enqueue((text, isPartial));
                 }
