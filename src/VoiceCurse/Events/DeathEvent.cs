@@ -38,39 +38,39 @@ public class DeathEvent(VoiceCurseConfig config) : IVoiceEvent {
         _cachedMilkItem ??= Resources.FindObjectsOfTypeAll<Item>()
             .FirstOrDefault(i => i.name.Contains("Milk") || (i.UIData != null && i.UIData.itemName.Contains("Milk")));
 
-        if (_cachedMilkItem is not null) {
-            int itemCount = 0;
-            
-            if (player.player?.itemSlots != null) {
-                itemCount += player.player.itemSlots.Count(slot => !slot.IsEmpty());
-            }
-            
-            if (player.player?.backpackSlot != null && player.player.backpackSlot.hasBackpack) {
-                if (player.player.backpackSlot.data.TryGetDataEntry(DataEntryKey.BackpackData, out BackpackData backpackData)) {
-                    itemCount += backpackData.FilledSlotCount();
-                }
-            }
-            
-            if (itemCount == 0) {
-                player.refs.items.SpawnItemInHand(_cachedMilkItem.name);
-            } 
-            else {
-                foreach (ItemSlot? slot in player.player!.itemSlots) {
-                    slot.EmptyOut();
-                }
-
-                if (player.player.backpackSlot.hasBackpack && 
-                    player.player.backpackSlot.data.TryGetDataEntry(DataEntryKey.BackpackData, out BackpackData bpData)) {
-                    
-                    foreach (ItemSlot? slot in bpData.itemSlots) {
-                        slot.EmptyOut();
-                    }
-                }
-                
-                for (int i = 0; i < itemCount; i++) {
-                    player.refs.items.SpawnItemInHand(_cachedMilkItem.name);
-                }
+        if (_cachedMilkItem is null) return;
+        
+        int itemCount = 0;
+        
+        if (player.player?.itemSlots != null) {
+            itemCount += player.player.itemSlots.Count(slot => !slot.IsEmpty());
+        }
+        
+        if (player.player?.backpackSlot != null && player.player.backpackSlot.hasBackpack) {
+            if (player.player.backpackSlot.data.TryGetDataEntry(DataEntryKey.BackpackData, out BackpackData backpackData)) {
+                itemCount += backpackData.FilledSlotCount();
             }
         }
+        
+        if (itemCount == 0) {
+            player.refs.items.SpawnItemInHand(_cachedMilkItem.name);
+        } else {
+            foreach (ItemSlot? slot in player.player!.itemSlots) {
+                slot.EmptyOut();
+            }
+
+            if (player.player.backpackSlot.hasBackpack && 
+                player.player.backpackSlot.data.TryGetDataEntry(DataEntryKey.BackpackData, out BackpackData bpData)) {
+                
+                foreach (ItemSlot? slot in bpData.itemSlots) {
+                    slot.EmptyOut();
+                }
+            }
+            
+            for (int i = 0; i < itemCount; i++) {
+                player.refs.items.SpawnItemInHand(_cachedMilkItem.name);
+            }
+        }
+        
     }
 }
