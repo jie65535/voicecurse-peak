@@ -9,8 +9,8 @@ namespace VoiceCurse.Events;
 public class DeathEvent(VoiceCurseConfig config) : VoiceEventBase(config) {
     private readonly HashSet<string> _keywords = [
         "die", "death", "dead", "suicide", "kill", "deceased", "skeleton", 
-        "skull", "calcium", "bones", "bone", "perish", "demise", "expire", 
-        "expired", "fatal", "mortality", "mortal", "milk"
+        "skull", "bones", "bone", "perish", "demise", "expire", 
+        "expired", "fatal", "mortality", "mortal", "calcium", "milk"
     ];
 
     private static Item? _cachedMilkItem;

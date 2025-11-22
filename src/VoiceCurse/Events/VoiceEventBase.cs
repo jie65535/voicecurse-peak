@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using VoiceCurse.Core;
 using VoiceCurse.Networking;
@@ -10,7 +9,7 @@ namespace VoiceCurse.Events;
 public abstract class VoiceEventBase(VoiceCurseConfig config) : IVoiceEvent {
     protected readonly VoiceCurseConfig Config = config;
     private float _lastExecutionTime = -999f;
-    private static float Cooldown => 2.0f;
+    protected virtual float Cooldown => 2.0f;
 
     protected abstract IEnumerable<string> GetKeywords();
 
@@ -21,24 +20,32 @@ public abstract class VoiceEventBase(VoiceCurseConfig config) : IVoiceEvent {
 
         string? matchedKeyword = GetKeywords().FirstOrDefault(spokenWord.Contains);
         if (matchedKeyword == null) return false;
-
+        
         Character localChar = Character.localCharacter;
-        if (localChar is null) return false;
+        if (localChar == null || !localChar.gameObject.activeInHierarchy) return false;
         
         _lastExecutionTime = Time.time;
         
-        bool success = OnExecute(localChar, spokenWord, fullSentence, matchedKeyword);
+        bool success = false;
+        
+        try {
+            success = OnExecute(localChar, spokenWord, fullSentence, matchedKeyword);
+        } catch (System.Exception e) {
+            if (Config.EnableDebugLogs.Value) {
+                Debug.LogWarning($"[VoiceCurse] Failed to execute {GetType().Name}: {e.Message}");
+            }
+        }
+
         if (!success) return success;
         
         if (Config.EnableDebugLogs.Value) {
-            Debug.Log($"[VoiceCurse] {GetType().Name} executed locally. Sending Network Event...");
+            Debug.Log($"[VoiceCurse] {GetType().Name} executed locally. Broadcasting event...");
         }
-            
         string eventName = GetType().Name.Replace("Event", "");
         VoiceCurseNetworker.SendCurseEvent(spokenWord, matchedKeyword, eventName, localChar.Center);
 
         return success;
     }
-    
+
     public virtual void PlayEffects(Vector3 position) { }
 }

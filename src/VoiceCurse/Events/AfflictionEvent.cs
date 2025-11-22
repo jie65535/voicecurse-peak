@@ -9,7 +9,7 @@ public class AfflictionEvent(VoiceCurseConfig config) : VoiceEventBase(config) {
     private static readonly Dictionary<CharacterAfflictions.STATUSTYPE, string[]> WordGroups = new() {
         { CharacterAfflictions.STATUSTYPE.Injury, ["damage", "hurt", "injury", "injured", "pain"] },
         { CharacterAfflictions.STATUSTYPE.Hunger, ["hunger", "hungry", "starving", "starve", "food"] },
-        { CharacterAfflictions.STATUSTYPE.Cold,   ["freezing", "cold", "blizzard", "shiver", "ice"] },
+        { CharacterAfflictions.STATUSTYPE.Cold,   ["freezing", "cold", "blizzard", "shiver", "ice", "frozen"] },
         { CharacterAfflictions.STATUSTYPE.Hot,    ["hot", "burning", "fire", "melt"] },
         { CharacterAfflictions.STATUSTYPE.Poison, ["poison", "sick", "vomit", "toxic"] },
         { CharacterAfflictions.STATUSTYPE.Spores, ["spores", "spore", "zombie", "fungus", "mushroom"] },

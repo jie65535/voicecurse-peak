@@ -28,11 +28,11 @@ public partial class Plugin : BaseUnityPlugin {
     private IVoiceRecognizer? _recognizer;
     private VoiceEventHandler? _eventHandler;
     private VoiceCurseNetworker? _networker;
-    
     private Model? _voskModel;
     
     private int _currentSampleRate;
-    private bool _isHooked;
+    
+    private VoiceCurseHook? _activeHook;
         
     private readonly ConcurrentQueue<Action> _mainThreadActions = new();
     private volatile string _lastPartialText = "";
@@ -53,7 +53,7 @@ public partial class Plugin : BaseUnityPlugin {
 
         _networker = new VoiceCurseNetworker();
         PhotonNetwork.AddCallbackTarget(_networker);
-        
+
         string modelPath = Path.Combine(Paths.PluginPath, "VoiceCurse", "model-en-us");
         if (Directory.Exists(modelPath)) {
             try {
@@ -65,7 +65,7 @@ public partial class Plugin : BaseUnityPlugin {
         } else {
             Log.LogError($"Vosk model not found at: {modelPath}");
         }
-        
+
         if (_voskModel != null) {
             SetupVoiceRecognition(AudioSettings.outputSampleRate);
         }
@@ -76,7 +76,7 @@ public partial class Plugin : BaseUnityPlugin {
             action.Invoke();
         }
 
-        if (!_isHooked && Character.localCharacter is not null) {
+        if (_activeHook == null && Character.localCharacter != null) {
             TryHookIntoPhotonVoice();
         }
     }
@@ -84,13 +84,13 @@ public partial class Plugin : BaseUnityPlugin {
     private void TryHookIntoPhotonVoice() {
         PhotonVoiceView voiceView = Character.localCharacter.GetComponent<PhotonVoiceView>();
         
-        if (voiceView?.RecorderInUse is null) return;
+        if (voiceView == null || voiceView.RecorderInUse == null) return;
         Recorder recorder = voiceView.RecorderInUse;
-            
+
         VoiceCurseHook hook = recorder.gameObject.AddComponent<VoiceCurseHook>();
         hook.Initialize(this, recorder);
             
-        _isHooked = true;
+        _activeHook = hook;
         Log.LogInfo($"[VoiceCurse] Hooked into Recorder on: {recorder.gameObject.name}");
     }
 
@@ -115,6 +115,7 @@ public partial class Plugin : BaseUnityPlugin {
 
     private void SetupVoiceRecognition(int sampleRate) {
         if (_voskModel == null) return;
+        
         if (_recognizer != null && _currentSampleRate == sampleRate) return;
 
         try {
@@ -166,24 +167,35 @@ public class VoiceCurseHook : MonoBehaviour {
     public void Initialize(Plugin plugin, Recorder recorder) {
         _plugin = plugin;
         _recorder = recorder;
-        CheckIfAlreadyReady();
+        CheckIfReady();
     }
 
-    private void CheckIfAlreadyReady() {
-        if (_recorder is null || !_recorder.IsCurrentlyTransmitting) return;
-        BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
+    private void Update() {
+        if (!_hasInjected) {
+            CheckIfReady();
+        }
+    }
+
+    private void CheckIfReady() {
+        if (_recorder == null || _plugin == null) return;
+        if (!_recorder.IsCurrentlyTransmitting) return;
+        
+        const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
         FieldInfo? field = typeof(Recorder).GetField("voice", flags);
 
         if (field == null) return;
         LocalVoice? voice = field.GetValue(_recorder) as LocalVoice;
         if (voice == null) return;
-        _plugin?.OnPhotonVoiceReady(_recorder, voice);
+        
+        _plugin.OnPhotonVoiceReady(_recorder, voice);
         _hasInjected = true;
     }
-
+    
     private void PhotonVoiceCreated(PhotonVoiceCreatedParams p) {
         if (_hasInjected) return;
-        if (_recorder is not null) _plugin?.OnPhotonVoiceReady(_recorder, p.Voice);
+        if (_recorder == null) return;
+        
+        _plugin?.OnPhotonVoiceReady(_recorder, p.Voice);
         _hasInjected = true;
     }
 }

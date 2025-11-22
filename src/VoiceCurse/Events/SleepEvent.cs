@@ -4,7 +4,11 @@ using VoiceCurse.Core;
 namespace VoiceCurse.Events;
 
 public class SleepEvent(VoiceCurseConfig config) : VoiceEventBase(config) {
-    private readonly HashSet<string> _keywords = ["faint", "sleep", "exhausted", "sleepy", "tired", "bed"];
+    private readonly HashSet<string> _keywords = [
+        "faint", "sleep", "exhausted", "sleepy", "tired", "bed", 
+        "nap", "rest", "slumber", "doze", "snooze", "pass out", 
+        "knock out", "blackout", "coma", "narc"
+    ];
     
     protected override IEnumerable<string> GetKeywords() => _keywords;
 

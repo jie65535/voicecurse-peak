@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -11,10 +12,9 @@ namespace VoiceCurse.Networking;
 
 public class VoiceCurseNetworker : IOnEventCallback {
     private const byte VoiceCurseEventCode = 187; 
-
     private static MonoBehaviour? _connectionLog;
     private static MethodInfo? _addMessageMethod;
-    
+
     public static void SendCurseEvent(string spokenWord, string matchedKeyword, string eventName, Vector3 position) {
         object[] content = [
             PhotonNetwork.LocalPlayer.ActorNumber,
@@ -29,7 +29,7 @@ public class VoiceCurseNetworker : IOnEventCallback {
 
         PhotonNetwork.RaiseEvent(VoiceCurseEventCode, content, raiseEventOptions, sendOptions);
     }
-    
+
     public void OnEvent(EventData photonEvent) {
         if (photonEvent.Code != VoiceCurseEventCode) return;
 
@@ -39,10 +39,10 @@ public class VoiceCurseNetworker : IOnEventCallback {
         string matchedKeyword = (string)data[2];
         string eventName = (string)data[3];
         Vector3 position = (Vector3)data[4];
-        
+
         string charName = "Unknown";
         Color playerColor = Color.white;
-        
+
         Photon.Realtime.Player? photonPlayer = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
         if (photonPlayer != null) {
             charName = photonPlayer.NickName;
@@ -54,9 +54,9 @@ public class VoiceCurseNetworker : IOnEventCallback {
                 playerColor = character.refs.customization.PlayerColor;
             }
         }
-        
+
         DisplayNotification(charName, playerColor, spokenWord, matchedKeyword, eventName);
-        
+
         if (VoiceEventHandler.Events.TryGetValue(eventName, out IVoiceEvent evt)) {
             evt.PlayEffects(position);
         }
@@ -67,12 +67,18 @@ public class VoiceCurseNetworker : IOnEventCallback {
     }
 
     private void DisplayNotification(string playerName, Color color, string fullWord, string keyword, string eventName) {
-        _connectionLog ??= Object.FindFirstObjectByType(System.Type.GetType("PlayerConnectionLog, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null")) as MonoBehaviour 
+        if (_connectionLog == null) {
+            _connectionLog = Object.FindFirstObjectByType(System.Type.GetType("PlayerConnectionLog, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null")) as MonoBehaviour 
                            ?? Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).FirstOrDefault(m => m.GetType().Name == "PlayerConnectionLog");
+            _addMessageMethod = null;
+        }
 
-        if (_connectionLog is null) return;
+        if (_connectionLog == null) return;
         
-        _addMessageMethod ??= _connectionLog.GetType().GetMethod("AddMessage", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (_addMessageMethod == null) { 
+            _addMessageMethod = _connectionLog.GetType().GetMethod("AddMessage", BindingFlags.NonPublic | BindingFlags.Instance);
+        }
+
         if (_addMessageMethod == null) return;
 
         string playerHex = "#" + ColorUtility.ToHtmlStringRGB(color);
@@ -83,13 +89,27 @@ public class VoiceCurseNetworker : IOnEventCallback {
             string prefix = fullWord[..index];
             string match = fullWord.Substring(index, keyword.Length);
             string suffix = fullWord[(index + keyword.Length)..];
-            displayString = $"{prefix}<color=#8B0000>{match}</color>{suffix}";
+            
+            string rainbowMatch = ApplyRainbowEffect(match);
+            displayString = $"{prefix}<b>{rainbowMatch}</b>{suffix}";
         }
 
         string finalMessage = $"<color={playerHex}>{playerName} said \"{displayString}\" which triggered </color><color=#FFA500>{eventName}</color>";
 
         try {
             _addMessageMethod.Invoke(_connectionLog, [finalMessage]);
-        } catch { /* Ignore */ }
+        } catch { 
+            _connectionLog = null; // Refresh next time if stale
+        }
+    }
+
+    private string ApplyRainbowEffect(string text) {
+        string[] colors = ["#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#0000FF", "#4B0082", "#9400D3"];
+        StringBuilder sb = new();
+        for (int i = 0; i < text.Length; i++) {
+            string color = colors[i % colors.Length];
+            sb.Append($"<color={color}>{text[i]}</color>");
+        }
+        return sb.ToString();
     }
 }
