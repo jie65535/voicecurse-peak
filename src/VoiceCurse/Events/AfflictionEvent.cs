@@ -16,7 +16,8 @@ namespace VoiceCurse.Events {
         };
         
         private readonly Dictionary<string, CharacterAfflictions.STATUSTYPE> _keywords = 
-            WordGroups.SelectMany(g => g.Value.Select(w => (Word: w, Type: g.Key))).ToDictionary(x => x.Word, x => x.Type); // WTF
+            WordGroups.SelectMany(g => g.Value.Select(w => (Word: w, Type: g.Key))).ToDictionary(x => x.Word, x => x.Type); 
+            // Thank you, LINQ, very cool.
 
         public bool TryExecute(string spokenWord, string fullSentence) {
             if (!_keywords.TryGetValue(spokenWord, out CharacterAfflictions.STATUSTYPE statusType)) {
