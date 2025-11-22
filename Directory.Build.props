@@ -1,0 +1,30 @@
+<Project>
+    <Import Project="$(SolutionRoot)Config.Build.user.props" Condition="Exists('$(SolutionRoot)Config.Build.user.props')"/>
+    
+    <PropertyGroup>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <UseArtifactsOutput>true</UseArtifactsOutput>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>embedded</DebugType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+        <SolutionRoot>$(MSBuildThisFileDirectory)</SolutionRoot>
+        
+        <GameInstallDir Condition="'$([MSBuild]::IsOSUnixLike())' == 'true' and $(GameInstallDir) == ''">/mnt/storage/SteamLibrary/steamapps/common/PEAK/</GameInstallDir>
+        <GameInstallDir Condition="'$([MSBuild]::IsOSUnixLike())' != 'true' and $(GameInstallDir) == ''">$(MSBuildProgramFiles32)/Steam/steamapps/common/PEAK/</GameInstallDir>
+        
+        <PluginsDir Condition="'$([MSBuild]::IsOSUnixLike())' == 'true' and $(PluginsDir) == ''">$(HOME)/.local/share/com.kesomannen.gale/peak/profiles/Default/BepInEx/plugins/</PluginsDir>
+        <PluginsDir Condition="'$([MSBuild]::IsOSUnixLike())' != 'true' and $(PluginsDir) == ''">$(USERPROFILE)/AppData/Roaming/r2modmanPlus-local/PEAK/profiles/Default/BepInEx/plugins/</PluginsDir>
+        
+        <ManagedDir>$(GameInstallDir)PEAK_Data/Managed/</ManagedDir>
+
+        <PeakGameRootDir>$(GameInstallDir)</PeakGameRootDir>
+        <PeakPluginsDir>$(PluginsDir)</PeakPluginsDir>
+    </PropertyGroup>
+
+</Project>
