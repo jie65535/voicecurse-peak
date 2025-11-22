@@ -21,8 +21,6 @@ namespace VoiceCurse.Core {
                 throw new DirectoryNotFoundException("Vosk model not found at: " + modelPath);
             }
 
-            // Vosk.Vosk.SetLogLevel(0); // Enable if you need deep debugging
-
             try {
                 _model = new Model(modelPath);
                 _recognizer = new VoskRecognizer(_model, 48000.0f);
