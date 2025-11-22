@@ -11,7 +11,7 @@ namespace VoiceCurse;
 
 [BepInAutoPlugin]
 public partial class Plugin : BaseUnityPlugin {
-    internal static ManualLogSource Log { get; set; } = null!;
+    private static ManualLogSource Log { get; set; } = null!;
         
     private VoiceCurseConfig? _config;
     private IVoiceRecognizer? _recognizer;
@@ -20,8 +20,7 @@ public partial class Plugin : BaseUnityPlugin {
     private AudioSource? _micSource;
         
     private readonly ConcurrentQueue<Action> _mainThreadActions = new();
-
-    private volatile string _lastPartialText = "";
+    private string _lastPartialText = "";
 
     private void Awake() {
         Log = Logger;
@@ -50,18 +49,18 @@ public partial class Plugin : BaseUnityPlugin {
                 _mainThreadActions.Enqueue(() => {
                     Log.LogInfo($"[Recognized]: {text}");
                     _lastPartialText = ""; 
-                    _eventHandler?.HandleSpeech(text);
+                    _eventHandler?.HandleSpeech(text, true); 
                 });
             };
-
+            
             _recognizer.OnPartialResult += (text) => {
                 if (string.IsNullOrWhiteSpace(text) || text == _lastPartialText || text.Length < 2) return;
-                _lastPartialText = text;
-
-                string captured = text; 
+                string captured = text;
+                
                 _mainThreadActions.Enqueue(() => {
+                    _lastPartialText = captured;
                     Log.LogInfo($"[Partial]: {captured}"); 
-                    _eventHandler?.HandleSpeech(captured); 
+                    _eventHandler?.HandleSpeech(captured, false);
                 });
             };
 
@@ -93,7 +92,7 @@ public partial class Plugin : BaseUnityPlugin {
             _tapper.Initialize(_recognizer, muteOutput: true);
         }
         
-        string? deviceName = null; 
+        string? deviceName = null; // System Default
         Log.LogInfo("Starting Microphone Capture on: System Default");
             
         _micSource.clip = Microphone.Start(deviceName, true, 10, 48000);

@@ -7,18 +7,48 @@ namespace VoiceCurse.Core {
             new InstantDeathEvent(config),
             new AfflictionEvent(config)
         };
+        
+        private readonly Dictionary<string, int> _previousWordCounts = new();
 
-        public void HandleSpeech(string text) {
+        public void HandleSpeech(string text, bool isFinal) {
             if (string.IsNullOrWhiteSpace(text)) return;
 
             string lowerText = text.ToLowerInvariant();
+            string[] words = lowerText.Split(new[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
+            Dictionary<string, int> currentCounts = new();
             
-            string[] words = lowerText.Split(' ');
+            foreach (string w in words) {
+                currentCounts.TryAdd(w, 0);
+                currentCounts[w]++;
+            }
 
-            foreach (IVoiceEvent evt in _events) {
-                foreach(string word in words) {
-                    evt.TryExecute(word, lowerText);
+            foreach (KeyValuePair<string, int> kvp in currentCounts) {
+                string word = kvp.Key;
+                int count = kvp.Value;
+                
+                int previousCount = 0;
+                if (_previousWordCounts.TryGetValue(word, out int prev)) {
+                    previousCount = prev;
                 }
+                
+                int diff = count - previousCount;
+
+                if (diff <= 0) continue;
+                
+                for (int i = 0; i < diff; i++) {
+                    foreach (IVoiceEvent evt in _events) {
+                        evt.TryExecute(word, lowerText);
+                    }
+                }
+            }
+
+            _previousWordCounts.Clear();
+            foreach (KeyValuePair<string, int> kvp in currentCounts) {
+                _previousWordCounts[kvp.Key] = kvp.Value;
+            }
+
+            if (isFinal) {
+                _previousWordCounts.Clear();
             }
         }
     }
