@@ -7,62 +7,79 @@ using UnityEngine;
 using VoiceCurse.Core;
 using VoiceCurse.Audio;
 
-namespace VoiceCurse;
+namespace VoiceCurse {
+    [BepInAutoPlugin]
+    public partial class Plugin : BaseUnityPlugin {
+        private static ManualLogSource Log { get; set; } = null!;
+        private IVoiceRecognizer? _recognizer;
+        private AudioStreamTapper? _tapper;
+        private AudioSource? _micSource;
+        private readonly ConcurrentQueue<Action> _mainThreadActions = new();
 
-[BepInAutoPlugin]
-public partial class Plugin : BaseUnityPlugin {
-    internal static ManualLogSource Log { get; set; } = null!;
-    private IVoiceRecognizer? _recognizer;
-    private AudioStreamTapper? _tapper;
-    private readonly ConcurrentQueue<Action> _mainThreadActions = new();
-
-    private void Awake() {
-        Log = Logger;
-        Log.LogInfo($"Plugin {Name} is loading...");
-
-        SetupVoiceRecognition();
-    }
-
-    private void SetupVoiceRecognition() {
-        string modelPath = Path.Combine(Paths.PluginPath, "Ryocery-VoiceCurse", "model-en-us");
-
-        if (!Directory.Exists(modelPath)) {
-            Log.LogError($"Vosk model not found! Please create folder: {modelPath}");
-            return;
+        private void Awake() {
+            Log = Logger;
+            Log.LogInfo($"Plugin {Name} is loading...");
+            SetupVoiceRecognition();
         }
 
-        try {
-            _recognizer = new VoiceRecognizer(modelPath);
-            _recognizer.OnPhraseRecognized += OnPhraseRecognized;
-            _recognizer.Start();
+        private void SetupVoiceRecognition() {
+            string modelPath = Path.Combine(Paths.PluginPath, "VoiceCurse", "model-en-us");
 
-            Log.LogInfo("Voice Recognizer started successfully.");
-        } catch (Exception ex) {
-            Log.LogError($"Failed to start Voice Recognizer: {ex.Message}");
+            if (!Directory.Exists(modelPath)) {
+                Log.LogError($"Vosk model not found! Please create folder: {modelPath}");
+                return;
+            }
+
+            try {
+                _recognizer = new VoiceRecognizer(modelPath);
+                _recognizer.OnPhraseRecognized += OnPhraseRecognized;
+                _recognizer.Start();
+
+                Log.LogInfo("Voice Recognizer started successfully.");
+            } catch (Exception ex) {
+                Log.LogError($"Failed to start Voice Recognizer: {ex.Message}");
+            }
         }
-    }
 
-    private void Update() {
-        if (_tapper is not null) return;
+        private void Update() {
+            while (_mainThreadActions.TryDequeue(out Action action)) {
+                action.Invoke();
+            }
+            
+            if (_micSource == null && _recognizer != null) {
+                SetupMicrophone();
+            }
+        }
 
-        AudioListener listener = FindFirstObjectByType<AudioListener>();
+        private void SetupMicrophone() {
+            GameObject micObj = new("VoiceCurse_Mic");
+            DontDestroyOnLoad(micObj);
+            
+            _micSource = micObj.AddComponent<AudioSource>();
+            _tapper = micObj.AddComponent<AudioStreamTapper>();
+            
+            if (_recognizer != null) {
+                _tapper.Initialize(_recognizer, muteOutput: true);
+            }
 
-        if (listener is null) return;
+            Log.LogInfo("Starting Microphone Capture...");
+            _micSource.clip = Microphone.Start(null, true, 10, 48000);
+            _micSource.loop = true;
+            
+            while (!(Microphone.GetPosition(null) > 0)) { }
+            
+            _micSource.Play();
+        }
 
-        Log.LogInfo("Found AudioListener, attaching Tapper...");
-        _tapper = listener.gameObject.AddComponent<AudioStreamTapper>();
-        if (_recognizer != null) _tapper.Initialize(_recognizer);
-    }
+        private void OnPhraseRecognized(string text) {
+            _mainThreadActions.Enqueue(() => {
+                Log.LogInfo($"[SPEECH DETECTED]: {text}");
+            });
+        }
 
-    private void OnPhraseRecognized(string text) {
-        _mainThreadActions.Enqueue(() => {
-            Log.LogInfo($"[SPEECH DETECTED]: {text}");
-        });
-    }
-
-
-    private void OnDestroy() {
-        _recognizer?.Stop();
-        _recognizer?.Dispose();
+        private void OnDestroy() {
+            _recognizer?.Stop();
+            _recognizer?.Dispose();
+        }
     }
 }
