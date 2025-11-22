@@ -12,7 +12,7 @@ public class AfflictionEvent(VoiceCurseConfig config) : IVoiceEvent {
         { CharacterAfflictions.STATUSTYPE.Cold,   ["freezing", "cold", "blizzard", "shiver", "ice"] },
         { CharacterAfflictions.STATUSTYPE.Hot,    ["hot", "burning", "fire", "melt"] },
         { CharacterAfflictions.STATUSTYPE.Poison, ["poison", "sick", "vomit", "toxic"] },
-        { CharacterAfflictions.STATUSTYPE.Spores, ["spores", "fungus", "mushroom"] },
+        { CharacterAfflictions.STATUSTYPE.Spores, ["spores", "spore", "zombie", "fungus", "mushroom"] },
     };
         
     private readonly Dictionary<string, CharacterAfflictions.STATUSTYPE> _keywords = 

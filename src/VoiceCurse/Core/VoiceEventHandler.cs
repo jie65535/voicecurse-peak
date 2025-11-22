@@ -7,7 +7,8 @@ public class VoiceEventHandler(VoiceCurseConfig config) {
     private readonly List<IVoiceEvent> _events = [
         new DeathEvent(config),
         new AfflictionEvent(config),
-        new SleepEvent(config)
+        new SleepEvent(config),
+        new ExplodeEvent(config),
     ];
         
     private readonly Dictionary<string, int> _previousWordCounts = new();
