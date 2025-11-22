@@ -3,7 +3,6 @@ using System.Linq;
 using UnityEngine;
 using Photon.Pun;
 using VoiceCurse.Core;
-using Zorro.Core;
 
 namespace VoiceCurse.Events;
 
@@ -11,7 +10,7 @@ public class DeathEvent(VoiceCurseConfig config) : IVoiceEvent {
     private readonly HashSet<string> _triggerWords = [
         "die", "death", "dead", "suicide", "kill", "deceased", "skeleton", 
         "skull", "calcium", "bones", "bone", "perish", "demise", "expire", 
-        "fatal", "mortality", "mortal", "milk"];
+        "expired", "fatal", "mortality", "mortal", "milk"];
 
     private static Item? _cachedMilkItem;
 
