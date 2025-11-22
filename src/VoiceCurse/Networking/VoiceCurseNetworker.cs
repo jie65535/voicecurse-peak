@@ -89,9 +89,7 @@ public class VoiceCurseNetworker : IOnEventCallback {
             string prefix = fullWord[..index];
             string match = fullWord.Substring(index, keyword.Length);
             string suffix = fullWord[(index + keyword.Length)..];
-            
-            string rainbowMatch = ApplyRainbowEffect(match);
-            displayString = $"{prefix}<b>{rainbowMatch}</b>{suffix}";
+            displayString = $"{prefix}<color=#8B0000>{match}</color>{suffix}";
         }
 
         string finalMessage = $"<color={playerHex}>{playerName} said \"{displayString}\" which triggered </color><color=#FFA500>{eventName}</color>";
@@ -99,17 +97,7 @@ public class VoiceCurseNetworker : IOnEventCallback {
         try {
             _addMessageMethod.Invoke(_connectionLog, [finalMessage]);
         } catch { 
-            _connectionLog = null; // Refresh next time if stale
+            _connectionLog = null;
         }
-    }
-
-    private string ApplyRainbowEffect(string text) {
-        string[] colors = ["#FF0000", "#FF7F00", "#FFFF00", "#00FF00", "#0000FF", "#4B0082", "#9400D3"];
-        StringBuilder sb = new();
-        for (int i = 0; i < text.Length; i++) {
-            string color = colors[i % colors.Length];
-            sb.Append($"<color={color}>{text[i]}</color>");
-        }
-        return sb.ToString();
     }
 }
