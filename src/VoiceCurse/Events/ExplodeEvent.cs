@@ -1,44 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Photon.Pun;
 using VoiceCurse.Core;
 
 namespace VoiceCurse.Events {
     public class ExplodeEvent(VoiceCurseConfig config) : IVoiceEvent {
-        private readonly HashSet<string> _keywords = new() { 
-            "explosion", "explode", "blowing", "blew", "blow", "boom" 
-        };
+        private readonly HashSet<string> _keywords = ["explosion", "explode", "blowing", "blew", "blow", "boom"];
+        private static GameObject? _cachedExplosionPrefab;
 
         public bool TryExecute(string spokenWord, string fullSentence) {
             if (!_keywords.Contains(spokenWord)) return false;
 
             Character localChar = Character.localCharacter;
-            if (localChar == null || localChar.data.dead) return false;
+            if (localChar is null || localChar.data.dead) return false;
 
             if (config.EnableDebugLogs.Value) {
                 Debug.Log($"[VoiceCurse] Explosion triggered by '{spokenWord}'");
             }
             
-            GameObject dynamiteObj = PhotonNetwork.Instantiate("Dynamite", localChar.Center, Quaternion.identity);
-            
-            if (dynamiteObj is not null) {
-                localChar.StartCoroutine(ExplodeRoutine(dynamiteObj));
+            if (_cachedExplosionPrefab is null) {
+                FindExplosionPrefab();
             }
 
+            if (_cachedExplosionPrefab is null) return true;
+            Object.Instantiate(_cachedExplosionPrefab, localChar.Center, Quaternion.identity);
+            localChar.refs.afflictions.AddStatus(CharacterAfflictions.STATUSTYPE.Injury, 0.7f);
+            localChar.AddForce(Vector3.up * 10f + Random.insideUnitSphere * 40f);
             return true;
         }
 
-        private IEnumerator ExplodeRoutine(GameObject? dynamiteObj) {
-            yield return null;
-            if (dynamiteObj is null) yield break;
-            
-            PhotonView view = dynamiteObj.GetComponent<PhotonView>();
-            view?.RPC("RPC_Explode", RpcTarget.All);
-            yield return new WaitForSeconds(0.1f);
-
-            if (dynamiteObj.GetComponent<PhotonView>().IsMine) {
-                PhotonNetwork.Destroy(dynamiteObj);
+        private void FindExplosionPrefab() {
+            Dynamite? dynamiteRef = Resources.FindObjectsOfTypeAll<Dynamite>().FirstOrDefault();
+            if (dynamiteRef is null) return;
+            _cachedExplosionPrefab = dynamiteRef.explosionPrefab;
+            if (_cachedExplosionPrefab is not null) {
+                Debug.Log("[VoiceCurse] Found Dynamite Explosion Prefab successfully.");
             }
         }
     }
