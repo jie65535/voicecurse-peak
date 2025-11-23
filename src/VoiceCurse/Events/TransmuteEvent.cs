@@ -98,17 +98,7 @@ public class TransmuteEvent(Config config) : VoiceEventBase(config) {
             _itemCache.Remove(searchName);
         }
 
-        Item[] allItems = Resources.FindObjectsOfTypeAll<Item>();
-        Item? foundItem = allItems.FirstOrDefault(i => i.name == searchName);
-
-        if (!foundItem) {
-            foundItem = allItems.FirstOrDefault(i => i.UIData != null && i.UIData.itemName == searchName);
-        }
-        
-        if (!foundItem) {
-            foundItem = allItems.FirstOrDefault(i => i.name.Contains(searchName) || (i.UIData != null && i.UIData.itemName.Contains(searchName)));
-        }
-        
+        Item? foundItem = Resources.FindObjectsOfTypeAll<Item>().FirstOrDefault(i => i.name.Contains(searchName) || (i.UIData != null && i.UIData.itemName.Contains(searchName)));
         _itemCache[searchName] = foundItem;
         
         if (!foundItem && Config.EnableDebugLogs.Value) {
