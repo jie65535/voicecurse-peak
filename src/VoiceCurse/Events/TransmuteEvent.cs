@@ -15,7 +15,7 @@ public class TransmuteEvent(Config config) : VoiceEventBase(config) {
         ( ["banana"], ["Berrynana Peel Yellow"] ),
         ( ["egg"], ["Egg"] ),
         ( ["fruit"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry", "Kingberry Purple", "Kingberry Yellow", "Kingberry Green", "Berrynana Brown", "Berrynana Yellow", "Berrynana Pink", "Berrynana Blue" ] ),
-        ( ["spore", "fungus", "mushroom", "fungi", "funghi", "infected", "shroom"], ["Mushroom Normie", "Mushroom Normie Poison"] )
+        ( ["fungus", "mushroom", "fungi", "funghi", "shroom"], ["Mushroom Normie", "Mushroom Normie Poison"] )
     ];
 
     private readonly Dictionary<string, string[]> _keywordToTargets = 
