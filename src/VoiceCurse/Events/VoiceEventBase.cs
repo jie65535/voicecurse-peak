@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using VoiceCurse.Core;
-using VoiceCurse.Networking;
+using VoiceCurse.External;
+using VoiceCurse.Interfaces;
 
 namespace VoiceCurse.Events;
 
@@ -42,7 +43,7 @@ public abstract class VoiceEventBase(Config config) : IVoiceEvent {
             Debug.Log($"[VoiceCurse] {GetType().Name} executed locally. Broadcasting event...");
         }
         string eventName = GetType().Name.Replace("Event", "");
-        Networker.SendCurseEvent(spokenWord, matchedKeyword, eventName, localChar.Center);
+        EventNetworker.SendCurseEvent(spokenWord, matchedKeyword, eventName, localChar.Center);
 
         return success;
     }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using VoiceCurse.Events;
+using VoiceCurse.Interfaces;
 
 namespace VoiceCurse.Core;
 

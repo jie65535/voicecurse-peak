@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace VoiceCurse.Events;
+namespace VoiceCurse.Interfaces;
 
 public interface IVoiceEvent {
     bool TryExecute(string spokenWord, string fullSentence);

@@ -13,7 +13,8 @@ using Photon.Voice.Unity;
 using Vosk;
 using VoiceCurse.Core;
 using VoiceCurse.Audio;
-using VoiceCurse.Networking;
+using VoiceCurse.External;
+using VoiceCurse.Interfaces;
 
 namespace VoiceCurse;
 
@@ -27,7 +28,7 @@ public partial class Plugin : BaseUnityPlugin {
     private Config? _config;
     private IVoiceRecognizer? _recognizer;
     private VoiceEventHandler? _eventHandler;
-    private Networker? _networker;
+    private EventNetworker? _networker;
     private Model? _voskModel;
     
     private int _currentSampleRate;
@@ -51,7 +52,7 @@ public partial class Plugin : BaseUnityPlugin {
             _eventHandler = new VoiceEventHandler(_config);
         }
 
-        _networker = new Networker();
+        _networker = new EventNetworker();
         PhotonNetwork.AddCallbackTarget(_networker);
 
         string modelPath = Path.Combine(Paths.PluginPath, "VoiceCurse", "model-en-us");

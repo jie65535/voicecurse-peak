@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using UnityEngine;
+using VoiceCurse.Interfaces;
 using Vosk;
 
 namespace VoiceCurse.Core;

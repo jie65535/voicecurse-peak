@@ -1,16 +1,15 @@
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using VoiceCurse.Core;
-using VoiceCurse.Events;
+using VoiceCurse.Interfaces;
 
-namespace VoiceCurse.Networking;
+namespace VoiceCurse.External;
 
-public class Networker : IOnEventCallback {
+public class EventNetworker : IOnEventCallback {
     private const byte VoiceCurseEventCode = 187; 
     private static MonoBehaviour? _connectionLog;
     private static MethodInfo? _addMessageMethod;

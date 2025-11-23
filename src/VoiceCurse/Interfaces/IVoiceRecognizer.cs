@@ -1,6 +1,6 @@
 using System;
 
-namespace VoiceCurse.Core;
+namespace VoiceCurse.Interfaces;
 
 public interface IVoiceRecognizer : IDisposable {
     event Action<string> OnPhraseRecognized;

@@ -1,5 +1,6 @@
 using Photon.Voice;
 using VoiceCurse.Core;
+using VoiceCurse.Interfaces;
 
 namespace VoiceCurse.Audio;
 
