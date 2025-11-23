@@ -5,7 +5,7 @@ namespace VoiceCurse.Events;
 
 public class ZombifyEvent(Config config) : VoiceEventBase(config) {
     private readonly HashSet<string> _deathKeywords = [
-        "zombie", "undead", "walker", "ghoul", "bitten", "bite",
+        "zombie", "walker", "ghoul", "bitten", "bite",
         "brain", "rot", "decay", "corpse", "zombify", "zombified",
         "infected", "infection", "plague", "pandemic", "virus", "outbreak",
         "cannibal", "flesh", "meat"
