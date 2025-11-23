@@ -43,11 +43,7 @@ public abstract class VoiceEventBase(Config config) : IVoiceEvent {
         }
         
         string eventName = GetType().Name.Replace("Event", "");
-        if (!string.IsNullOrEmpty(ExecutionDetail)) {
-            eventName += $" ({ExecutionDetail})";
-        }
-
-        NetworkHandler.SendCurseEvent(spokenWord, matchedKeyword, eventName, localChar.Center);
+        NetworkHandler.SendCurseEvent(spokenWord, matchedKeyword, eventName, ExecutionDetail, localChar.Center);
 
         return success;
     }

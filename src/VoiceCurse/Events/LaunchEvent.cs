@@ -21,12 +21,14 @@ public class LaunchEvent(Config config) : VoiceEventBase(config) {
         if (_cachedLaunchSFX is null) FindLaunchSFX();
         
         player.Fall(3f);
+        Vector3 forwardDir = player.data.lookDirection_Flat.normalized;
+        Vector3 rightDir = Vector3.Cross(Vector3.up, forwardDir);
 
         Vector3 launchDirection = fullSentence switch {
-            _ when fullSentence.Contains("left") => -player.transform.right + Vector3.up * 0.2f,
-            _ when fullSentence.Contains("right") => player.transform.right + Vector3.up * 0.2f,
-            _ when fullSentence.Contains("backward") || fullSentence.Contains("backwards") || fullSentence.Contains("back") => -player.transform.forward + Vector3.up * 0.2f,
-            _ when fullSentence.Contains("forward") || fullSentence.Contains("forwards") => player.transform.forward + Vector3.up * 0.2f,
+            _ when fullSentence.Contains("left") => -rightDir + Vector3.up * 0.2f,
+            _ when fullSentence.Contains("right") => rightDir + Vector3.up * 0.2f,
+            _ when fullSentence.Contains("backward") || fullSentence.Contains("backwards") || fullSentence.Contains("back") => -forwardDir + Vector3.up * 0.2f,
+            _ when fullSentence.Contains("forward") || fullSentence.Contains("forwards") => forwardDir + Vector3.up * 0.2f,
             _ when fullSentence.Contains("up") => Vector3.up,
             _ => GetRandomUpwardDirection()
         };

@@ -13,12 +13,13 @@ public class NetworkHandler : IOnEventCallback {
     private static MonoBehaviour? _connectionLog;
     private static MethodInfo? _addMessageMethod;
 
-    public static void SendCurseEvent(string spokenWord, string matchedKeyword, string eventName, Vector3 position) {
+    public static void SendCurseEvent(string spokenWord, string matchedKeyword, string eventName, string? detail, Vector3 position) {
         object[] content = [
             PhotonNetwork.LocalPlayer.ActorNumber,
             spokenWord,
             matchedKeyword,
             eventName,
+            detail ?? string.Empty,
             position
         ];
 
@@ -36,7 +37,8 @@ public class NetworkHandler : IOnEventCallback {
         string spokenWord = (string)data[1];
         string matchedKeyword = (string)data[2];
         string eventName = (string)data[3];
-        Vector3 position = (Vector3)data[4];
+        string detail = (string)data[4];
+        Vector3 position = (Vector3)data[5];
 
         string charName = "Unknown";
         Color playerColor = Color.white;
@@ -53,7 +55,7 @@ public class NetworkHandler : IOnEventCallback {
             }
         }
 
-        DisplayNotification(charName, playerColor, spokenWord, matchedKeyword, eventName);
+        DisplayNotification(charName, playerColor, spokenWord, matchedKeyword, eventName, detail);
 
         if (EventHandler.Events.TryGetValue(eventName, out IVoiceEvent evt)) {
             evt.PlayEffects(position);
@@ -64,7 +66,7 @@ public class NetworkHandler : IOnEventCallback {
         return Character.AllCharacters.FirstOrDefault(c => c.photonView.OwnerActorNr == actorNumber);
     }
 
-    private static void DisplayNotification(string playerName, Color color, string fullWord, string keyword, string eventName) {
+    private static void DisplayNotification(string playerName, Color color, string fullWord, string keyword, string eventName, string detail) {
         if (!_connectionLog) {
             _connectionLog = Object.FindFirstObjectByType(System.Type.GetType("PlayerConnectionLog, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null")) as MonoBehaviour 
                            ?? Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).FirstOrDefault(m => m.GetType().Name == "PlayerConnectionLog");
@@ -90,7 +92,7 @@ public class NetworkHandler : IOnEventCallback {
             displayString = $"{prefix}<color=#8B0000>{match}</color>{suffix}";
         }
 
-        string finalMessage = $"<color={playerHex}>{playerName} said \"{displayString}\" which triggered </color><color=#FFA500>{eventName}</color>";
+        string finalMessage = $"<color={playerHex}>{playerName} said \"{displayString}\" which triggered </color><color=#FFA500>{eventName}</color><color=#FAFA33>{(string.IsNullOrEmpty(detail) ? "" : $" ({detail})")}</color>";
 
         try {
             _addMessageMethod.Invoke(_connectionLog, [finalMessage]);
