@@ -18,8 +18,9 @@ public partial class Plugin : BaseUnityPlugin {
         
         string? pluginDir = Path.GetDirectoryName(Info.Location);
         if (string.IsNullOrEmpty(pluginDir)) pluginDir = Paths.PluginPath;
-        
         _manager = new VoiceCurseManager(Log, _config, pluginDir);
+        
+        Log.LogInfo($"Plugin {Name} loaded successfully.");
     }
 
     private void Update() {
