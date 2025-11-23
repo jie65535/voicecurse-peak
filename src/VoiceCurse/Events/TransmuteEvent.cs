@@ -6,55 +6,45 @@ using Photon.Pun;
 namespace VoiceCurse.Events;
 
 public class TransmuteEvent(Config config) : VoiceEventBase(config) {
-    private readonly Dictionary<string, string> _transmuteMap = new() {
-        { "milk", "Fortified Milk" },
-        { "calcium", "Fortified Milk" },
-        { "cactus", "Cactus" },
-        { "cacti", "Cactus" },
-        { "coconut", "Coconut" },
-        { "apple", "Red Crispberry" },
-        { "banana", "Berrynana Peel Yellow" },
-        { "egg", "Egg" },
-    };
+    private static readonly List<(string[] Triggers, string[] Targets)> TransmuteDefinitions = [
+        ( ["milk", "calcium"], ["Fortified Milk"] ),
+        ( ["cactus", "cacti"], ["Cactus"] ),
+        ( ["coconut"], ["Coconut"] ),
+        ( ["apple"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry"] ),
+        ( ["banana"], ["Berrynana Peel Yellow"] ),
+        ( ["egg"], ["Egg"] ),
+        ( ["fruit"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry", "Kingberry Purple", "Kingberry Yellow", "Kingberry Green", "Berrynana Brown", "Berrynana Yellow", "Berrynana Pink", "Berrynana Blue" ] ) 
+    ];
+
+    private readonly Dictionary<string, string[]> _keywordToTargets = 
+        TransmuteDefinitions
+            .SelectMany(def => def.Triggers.Select(trigger => (Trigger: trigger, def.Targets)))
+            .ToDictionary(x => x.Trigger, x => x.Targets);
 
     private readonly Dictionary<string, Item?> _itemCache = new();
 
-    protected override IEnumerable<string> GetKeywords() => _transmuteMap.Keys;
+    protected override IEnumerable<string> GetKeywords() => _keywordToTargets.Keys;
 
     protected override bool OnExecute(Character player, string spokenWord, string fullSentence, string matchedKeyword) {
         if (player.data.dead) return false;
         
-        string? targetItemName = null;
-        
-        if (_transmuteMap.TryGetValue(matchedKeyword, out string? search)) {
-            targetItemName = search;
+        string[]? targetItemNames = null;
+        if (_keywordToTargets.TryGetValue(matchedKeyword, out string[]? targets)) {
+            targetItemNames = targets;
         } else {
-            string? key = _transmuteMap.Keys.FirstOrDefault(fullSentence.Contains);
-            if (key != null) targetItemName = _transmuteMap[key];
+            string? key = _keywordToTargets.Keys.FirstOrDefault(fullSentence.Contains);
+            if (key != null) targetItemNames = _keywordToTargets[key];
         }
 
-        if (targetItemName == null) return false;
-        TransmuteInventory(player, targetItemName);
+        if (targetItemNames == null || targetItemNames.Length == 0) return false;
+        
+        TransmuteInventory(player, targetItemNames);
             
         player.photonView.RPC("RPCA_Die", RpcTarget.All, player.Center);
         return true;
-
     }
 
-    private void TransmuteInventory(Character player, string itemNameSearch) {
-        if (!_itemCache.TryGetValue(itemNameSearch, out Item? targetItem)) {
-            targetItem = Resources.FindObjectsOfTypeAll<Item>()
-                .FirstOrDefault(i => i.name.Contains(itemNameSearch) || 
-                                    (i.UIData != null && i.UIData.itemName.Contains(itemNameSearch)));
-            _itemCache[itemNameSearch] = targetItem;
-        }
-
-        if (!targetItem) {
-            if (Config.EnableDebugLogs.Value) Debug.LogWarning($"[VoiceCurse] Could not find item matching '{itemNameSearch}'");
-            return;
-        }
-
-        string prefabPath = "0_Items/" + targetItem.name;
+    private void TransmuteInventory(Character player, string[] possibleTargets) {
         int countToSpawn = 0;
         
         if (player.player?.itemSlots != null) {
@@ -64,7 +54,7 @@ public class TransmuteEvent(Config config) : VoiceEventBase(config) {
                 slot.EmptyOut();
             }
         }
-        
+
         ItemSlot? backpackSlot = player.player?.GetItemSlot(3);
         if (backpackSlot != null && !backpackSlot.IsEmpty()) {
             if (backpackSlot.data.TryGetDataEntry(DataEntryKey.BackpackData, out BackpackData backpackData)) {
@@ -79,8 +69,15 @@ public class TransmuteEvent(Config config) : VoiceEventBase(config) {
         Vector3 spawnOrigin = player.Center;
 
         for (int i = 0; i < countToSpawn; i++) {
+            string selectedTargetName = possibleTargets[Random.Range(0, possibleTargets.Length)];
+            Item? targetItem = GetOrFindItem(selectedTargetName);
+
+            if (targetItem == null) continue;
+
             Vector3 pos = spawnOrigin + Random.insideUnitSphere * 0.5f;
             pos.y = spawnOrigin.y + 0.5f; 
+            
+            string prefabPath = "0_Items/" + targetItem.name;
             GameObject obj = PhotonNetwork.Instantiate(prefabPath, pos, Quaternion.identity);
             
             if (obj.TryGetComponent(out PhotonView pv)) {
@@ -89,5 +86,23 @@ public class TransmuteEvent(Config config) : VoiceEventBase(config) {
         }
         
         player.refs.afflictions.UpdateWeight();
+    }
+    
+    private Item? GetOrFindItem(string searchName) {
+        if (_itemCache.TryGetValue(searchName, out Item? cachedItem)) {
+            return cachedItem;
+        }
+
+        Item? foundItem = Resources.FindObjectsOfTypeAll<Item>()
+            .FirstOrDefault(i => i.name.Contains(searchName) || 
+                                (i.UIData != null && i.UIData.itemName.Contains(searchName)));
+        
+        _itemCache[searchName] = foundItem;
+        
+        if (!foundItem && Config.EnableDebugLogs.Value) {
+            Debug.LogWarning($"[VoiceCurse] Could not find item matching '{searchName}'");
+        }
+        
+        return foundItem;
     }
 }
