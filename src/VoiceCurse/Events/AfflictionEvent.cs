@@ -15,7 +15,8 @@ public class AfflictionEvent(Config config) : VoiceEventBase(config) {
     };
     
     private readonly Dictionary<string, CharacterAfflictions.STATUSTYPE> _wordToType = 
-        WordGroups.SelectMany(g => g.Value.Select(w => (Word: w, Type: g.Key)))
+        WordGroups.SelectMany(g => g.Value
+            .Select(w => (Word: w, Type: g.Key)))
             .ToDictionary(x => x.Word, x => x.Type);
 
     protected override IEnumerable<string> GetKeywords() => _wordToType.Keys;
@@ -23,18 +24,31 @@ public class AfflictionEvent(Config config) : VoiceEventBase(config) {
     protected override bool OnExecute(Character player, string spokenWord, string fullSentence, string matchedKeyword) {
         if (player.refs?.afflictions is null) return false;
         if (player.data.dead || player.data.fullyPassedOut) return false;
-
-        if (!_wordToType.TryGetValue(matchedKeyword, out CharacterAfflictions.STATUSTYPE statusType)) {
-            return false;
+        if (!_wordToType.TryGetValue(matchedKeyword, out CharacterAfflictions.STATUSTYPE statusType)) return false;
+    
+        if (statusType is CharacterAfflictions.STATUSTYPE.Hot or CharacterAfflictions.STATUSTYPE.Cold) {
+            HandleTemperatureExchange(player, statusType);
         }
 
         float amount = Random.Range(Config.MinAfflictionPercent.Value, Config.MaxAfflictionPercent.Value);
-        
         if (Config.EnableDebugLogs.Value) {
             Debug.Log($"[VoiceCurse] Affliction Specifics: {statusType} ({amount:P0})");
         }
-
+        
         player.refs.afflictions.AddStatus(statusType, amount);
         return true;
+    }
+
+    private void HandleTemperatureExchange(Character player, CharacterAfflictions.STATUSTYPE incomingType) {
+        CharacterAfflictions.STATUSTYPE oppositeType = incomingType == CharacterAfflictions.STATUSTYPE.Hot ? CharacterAfflictions.STATUSTYPE.Cold : CharacterAfflictions.STATUSTYPE.Hot;
+        float currentOppositeValue = player.refs.afflictions.GetCurrentStatus(oppositeType);
+        if (currentOppositeValue == 0f) return;
+        
+        if (Config.EnableDebugLogs.Value) {
+            Debug.Log($"[VoiceCurse] Swapping {oppositeType} ({currentOppositeValue:P0}) to {incomingType}");
+        }
+        
+        player.refs.afflictions.SubtractStatus(oppositeType, currentOppositeValue);
+        player.refs.afflictions.AddStatus(incomingType, currentOppositeValue);
     }
 }
