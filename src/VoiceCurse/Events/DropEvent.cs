@@ -6,7 +6,7 @@ namespace VoiceCurse.Events;
 
 public class DropEvent(Config config) : VoiceEventBase(config) {
     private readonly HashSet<string> _keywords = [
-        "drop", "oops", "whoops", "butterfingers", "fumble", "slip", 
+        "drop", "oops", "whoops", "butterfingers", "fumble", 
         "release", "discard", "off"
     ];
 
