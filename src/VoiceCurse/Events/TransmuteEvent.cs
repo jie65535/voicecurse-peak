@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using Photon.Pun;
 
@@ -22,6 +23,7 @@ public class TransmuteEvent(Config config) : VoiceEventBase(config) {
             .ToDictionary(x => x.Trigger, x => x.Targets);
 
     private readonly Dictionary<string, Item?> _itemCache = new();
+    private static readonly Regex NameCleaner = new(@"\s*\((\d+|Clone)\)", RegexOptions.Compiled);
 
     protected override IEnumerable<string> GetKeywords() => _keywordToTargets.Keys;
 
@@ -71,16 +73,16 @@ public class TransmuteEvent(Config config) : VoiceEventBase(config) {
         for (int i = 0; i < countToSpawn; i++) {
             string selectedTargetName = possibleTargets[Random.Range(0, possibleTargets.Length)];
             Item? targetItem = GetOrFindItem(selectedTargetName);
-
-            if (targetItem == null) continue;
+            if (!targetItem) continue;
 
             Vector3 pos = spawnOrigin + Random.insideUnitSphere * 0.5f;
             pos.y = spawnOrigin.y + 0.5f; 
             
-            string prefabPath = "0_Items/" + targetItem.name;
-            GameObject obj = PhotonNetwork.Instantiate(prefabPath, pos, Quaternion.identity);
+            string cleanName = NameCleaner.Replace(targetItem.name, "").Trim();
+            string prefabPath = "0_Items/" + cleanName;
             
-            if (obj.TryGetComponent(out PhotonView pv)) {
+            GameObject obj = PhotonNetwork.Instantiate(prefabPath, pos, Quaternion.identity);
+            if (obj != null && obj.TryGetComponent(out PhotonView pv)) {
                 pv.RPC("SetKinematicRPC", RpcTarget.All, false, pos, Quaternion.identity);
             }
         }
@@ -90,10 +92,14 @@ public class TransmuteEvent(Config config) : VoiceEventBase(config) {
     
     private Item? GetOrFindItem(string searchName) {
         if (_itemCache.TryGetValue(searchName, out Item? cachedItem)) {
-            return cachedItem;
+            if (cachedItem) return cachedItem;
+            _itemCache.Remove(searchName);
         }
 
-        Item? foundItem = Resources.FindObjectsOfTypeAll<Item>().FirstOrDefault(i => i.name.Contains(searchName) || (i.UIData != null && i.UIData.itemName.Contains(searchName)));
+        Item? foundItem = Resources.FindObjectsOfTypeAll<Item>()
+            .FirstOrDefault(i => i.name.Contains(searchName) || 
+                                (i.UIData != null && i.UIData.itemName.Contains(searchName)));
+        
         _itemCache[searchName] = foundItem;
         
         if (!foundItem && Config.EnableDebugLogs.Value) {
