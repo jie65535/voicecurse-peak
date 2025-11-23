@@ -18,8 +18,8 @@ public class ExplodeEvent(Config config) : VoiceEventBase(config) {
 
     protected override bool OnExecute(Character player, string spokenWord, string fullSentence, string matchedKeyword) {
         if (player.data.dead) return false;
-        if (_cachedExplosionPrefab == null) FindExplosionPrefab();
-        if (_cachedExplosionPrefab == null) return true; 
+        if (!_cachedExplosionPrefab) FindExplosionPrefab();
+        if (!_cachedExplosionPrefab) return true; 
         
         player.refs.afflictions.AddStatus(CharacterAfflictions.STATUSTYPE.Injury, 0.7f);
         player.Fall(3f); 
@@ -37,16 +37,16 @@ public class ExplodeEvent(Config config) : VoiceEventBase(config) {
     }
     
     public override void PlayEffects(Vector3 position) {
-        if (_cachedExplosionPrefab == null) FindExplosionPrefab();
+        if (!_cachedExplosionPrefab) FindExplosionPrefab();
         
-        if (_cachedExplosionPrefab != null) {
+        if (_cachedExplosionPrefab) {
             Object.Instantiate(_cachedExplosionPrefab, position, Quaternion.identity);
         }
     }
 
-    private void FindExplosionPrefab() {
+    private static void FindExplosionPrefab() {
         Dynamite? dynamiteRef = Resources.FindObjectsOfTypeAll<Dynamite>().FirstOrDefault();
-        if (dynamiteRef != null) {
+        if (dynamiteRef) {
             _cachedExplosionPrefab = dynamiteRef.explosionPrefab;
         }
     }

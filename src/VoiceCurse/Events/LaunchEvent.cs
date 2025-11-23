@@ -43,7 +43,7 @@ public class LaunchEvent(Config config) : VoiceEventBase(config) {
         Object.Destroy(sfx, 5f);
     }
 
-    private void FindLaunchSFX() {
+    private static void FindLaunchSFX() {
         ScoutCannon? cannon = Resources.FindObjectsOfTypeAll<ScoutCannon>().FirstOrDefault();
         if (cannon is null) return;
         _cachedLaunchSFX = cannon.fireSFX;

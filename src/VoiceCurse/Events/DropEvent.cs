@@ -8,7 +8,7 @@ namespace VoiceCurse.Events;
 public class DropEvent(Config config) : VoiceEventBase(config) {
     private readonly HashSet<string> _keywords = [
         "drop", "oops", "whoops", "butterfingers", "fumble", "slip", 
-        "release", "discard", "yeet", "off"
+        "release", "discard", "off"
     ];
 
     protected override IEnumerable<string> GetKeywords() => _keywords;
@@ -40,7 +40,7 @@ public class DropEvent(Config config) : VoiceEventBase(config) {
         return true;
     }
 
-    private string? ScatterBackpackContents(Character player) {
+    private static string? ScatterBackpackContents(Character player) {
         ItemSlot backpackSlot = player.player.GetItemSlot(3);
         
         if (backpackSlot.IsEmpty() || 
@@ -57,7 +57,7 @@ public class DropEvent(Config config) : VoiceEventBase(config) {
             string prefabName = internalSlot.GetPrefabName();
             if (string.IsNullOrEmpty(prefabName)) continue;
             
-            Vector3 spawnPos = dropOrigin + (Random.insideUnitSphere * 0.5f);
+            Vector3 spawnPos = dropOrigin + Random.insideUnitSphere * 0.5f;
             spawnPos.y = dropOrigin.y + 0.5f;
             
             GameObject droppedItem = PhotonNetwork.Instantiate(

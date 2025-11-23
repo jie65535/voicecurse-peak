@@ -30,7 +30,6 @@ public class DeathEvent(Config config) : VoiceEventBase(config) {
 
     protected override bool OnExecute(Character player, string spokenWord, string fullSentence, string matchedKeyword) {
         if (player.data.dead) return false;
-
         string? targetItemName = null;
         
         if (_transmuteMap.TryGetValue(matchedKeyword, out string? search)) {
@@ -54,7 +53,7 @@ public class DeathEvent(Config config) : VoiceEventBase(config) {
             _itemCache[itemNameSearch] = targetItem;
         }
 
-        if (targetItem == null) {
+        if (!targetItem) {
             if (Config.EnableDebugLogs.Value) Debug.LogWarning($"[VoiceCurse] Could not find item matching '{itemNameSearch}'");
             return;
         }
@@ -83,9 +82,8 @@ public class DeathEvent(Config config) : VoiceEventBase(config) {
         if (countToSpawn == 0) countToSpawn = 1;
 
         for (int i = 0; i < countToSpawn; i++) {
-            Vector3 pos = spawnOrigin + (Random.insideUnitSphere * 0.5f);
+            Vector3 pos = spawnOrigin + Random.insideUnitSphere * 0.5f;
             pos.y = spawnOrigin.y + 0.5f; 
-
             GameObject obj = PhotonNetwork.Instantiate(prefabPath, pos, Quaternion.identity);
             
             if (obj.TryGetComponent(out PhotonView pv)) {
