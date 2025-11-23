@@ -1,0 +1,19 @@
+using System.Collections.Generic;
+using Photon.Pun;
+
+namespace VoiceCurse.Events;
+
+public class ZombieEvent(Config config) : VoiceEventBase(config) {
+    private readonly HashSet<string> _deathKeywords = [
+        "zombie", "undead", "walker", "ghoul", "infected", "bitten", "bite",
+        "brain", "rot", "decay", "corpse", "zombify", "zombified"
+    ];
+
+    protected override IEnumerable<string> GetKeywords() => _deathKeywords;
+
+    protected override bool OnExecute(Character player, string spokenWord, string fullSentence, string matchedKeyword) {
+        if (player.data.dead || player.data.zombified) return false;
+        player.photonView.RPC("RPCA_Zombify", RpcTarget.All, player.Center);
+        return true;
+    }
+}
