@@ -1,4 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using UnityEngine;
 using VoiceCurse.Events;
 using VoiceCurse.Interfaces;
 
@@ -6,23 +10,31 @@ namespace VoiceCurse.Handlers;
 
 public class EventHandler {
     public static readonly Dictionary<string, IVoiceEvent> Events = new();
-    
     private readonly Dictionary<string, int> _previousWordCounts = new();
 
     public EventHandler(Config config) {
-        List<IVoiceEvent> eventList = [
-            new DeathEvent(config),
-            new AfflictionEvent(config),
-            new SleepEvent(config),
-            new ExplodeEvent(config),
-            new LaunchEvent(config),
-            new DropEvent(config)
-        ];
-
         Events.Clear();
-        foreach (IVoiceEvent? evt in eventList) {
-            string name = evt.GetType().Name.Replace("Event", "");
-            Events[name] = evt;
+        RegisterEventsAutomatically(config);
+    }
+    
+    private static void RegisterEventsAutomatically(Config config) {
+        IEnumerable<Type> eventTypes = Assembly.GetExecutingAssembly()
+            .GetTypes()
+            .Where(t => typeof(VoiceEventBase)
+            .IsAssignableFrom(t) && !t.IsAbstract && t.IsClass);
+
+        foreach (Type type in eventTypes) {
+            try {
+                if (Activator.CreateInstance(type, config) is not IVoiceEvent evt) continue;
+                string name = type.Name.Replace("Event", "");
+                Events[name] = evt;
+                    
+                if (config.EnableDebugLogs.Value) {
+                    Debug.Log($"[VoiceCurse] Automatically registered event: {name}");
+                }
+            } catch (Exception e) {
+                Debug.LogError($"[VoiceCurse] Failed to register event {type.Name}: {e.Message}");
+            }
         }
     }
 
