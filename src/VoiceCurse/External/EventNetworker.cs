@@ -48,8 +48,8 @@ public class EventNetworker : IOnEventCallback {
         }
 
         Character? character = FindCharacterByActorNumber(actorNumber);
-        if (character != null) {
-            if (character.refs?.customization != null) {
+        if (character) {
+            if (character.refs?.customization) {
                 playerColor = character.refs.customization.PlayerColor;
             }
         }
@@ -61,18 +61,18 @@ public class EventNetworker : IOnEventCallback {
         }
     }
 
-    private Character? FindCharacterByActorNumber(int actorNumber) {
+    private static Character? FindCharacterByActorNumber(int actorNumber) {
         return Character.AllCharacters.FirstOrDefault(c => c.photonView.OwnerActorNr == actorNumber);
     }
 
-    private void DisplayNotification(string playerName, Color color, string fullWord, string keyword, string eventName) {
-        if (_connectionLog == null) {
+    private static void DisplayNotification(string playerName, Color color, string fullWord, string keyword, string eventName) {
+        if (!_connectionLog) {
             _connectionLog = Object.FindFirstObjectByType(System.Type.GetType("PlayerConnectionLog, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null")) as MonoBehaviour 
                            ?? Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).FirstOrDefault(m => m.GetType().Name == "PlayerConnectionLog");
             _addMessageMethod = null;
         }
 
-        if (_connectionLog == null) return;
+        if (!_connectionLog) return;
         
         if (_addMessageMethod == null) { 
             _addMessageMethod = _connectionLog.GetType().GetMethod("AddMessage", BindingFlags.NonPublic | BindingFlags.Instance);

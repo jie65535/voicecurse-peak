@@ -10,7 +10,7 @@ namespace VoiceCurse.Events;
 public abstract class VoiceEventBase(Config config) : IVoiceEvent {
     protected readonly Config Config = config;
     private float _lastExecutionTime = -999f;
-    protected virtual float Cooldown => 2.0f;
+    private static float Cooldown => 2.0f;
 
     protected abstract IEnumerable<string> GetKeywords();
 
