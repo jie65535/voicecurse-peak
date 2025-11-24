@@ -17,8 +17,12 @@ public abstract class VoiceEventBase(Config config) : IVoiceEvent {
 
     public bool TryExecute(string spokenWord, string fullSentence) {
         if (Time.time < _lastExecutionTime + Cooldown) return false;
-
-        string? matchedKeyword = GetKeywords().FirstOrDefault(spokenWord.Contains);
+        
+        string? matchedKeyword = GetKeywords().FirstOrDefault(keyword => 
+            spokenWord.Contains(keyword) || 
+            (fullSentence.Contains(keyword) && keyword.EndsWith(" " + spokenWord, System.StringComparison.OrdinalIgnoreCase))
+        );
+        
         if (matchedKeyword == null) return false;
         
         Character localChar = Character.localCharacter;
