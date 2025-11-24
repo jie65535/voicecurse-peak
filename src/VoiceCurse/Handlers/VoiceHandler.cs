@@ -93,36 +93,28 @@ public class VoiceHandler : IDisposable {
     }
 
     public void OnPhotonVoiceReady(Recorder recorder, LocalVoice voice) {
-        int photonRate = 48000; 
+        int streamSampleRate = 48000;
+        
         if (voice.Info.SamplingRate > 0) {
-            photonRate = voice.Info.SamplingRate;
+            streamSampleRate = voice.Info.SamplingRate;
         }
 
-        _log.LogInfo($"[VoiceCurse] Photon Voice Ready. Sampling Rate: {photonRate} Hz");
-
-        SetupVoiceRecognition(photonRate);
-
-        if (voice is LocalVoiceAudio<float> floatVoice) {
-            if (_recognizer != null) floatVoice.AddPostProcessor(new VoiceProcessor(_recognizer));
-            _log.LogInfo("[VoiceCurse] Audio Processor Injected successfully!");
-        }
-        else {
-            _log.LogWarning($"[VoiceCurse] LocalVoice type mismatch: {voice.GetType().Name}");
+        _log.LogInfo($"[VoiceCurse] Photon Stream Rate detected: {streamSampleRate} Hz");
+        SetupVoiceRecognition(streamSampleRate);
+        
+        if (_recognizer is VoiceRecognizer && voice is LocalVoiceAudio<float> floatVoice) {
+            floatVoice.AddPostProcessor(new VoiceProcessor(_recognizer));
+            _log.LogInfo($"[VoiceCurse] Audio Processor attached. Listening at {streamSampleRate} Hz.");
+        } else {
+            _log.LogWarning($"[VoiceCurse] Could not attach processor. Voice type: {voice.GetType().Name}");
         }
     }
 
     private void SetupVoiceRecognition(int sampleRate) {
+        if (_recognizer != null) return;
         if (_voskModel == null) return;
         
-        if (_recognizer != null && _currentSampleRate == sampleRate) return;
-
         try {
-            if (_recognizer != null) {
-                _recognizer.Stop();
-                _recognizer.Dispose();
-            }
-
-            _currentSampleRate = sampleRate;
             _recognizer = new VoiceRecognizer(_voskModel, sampleRate);
             
             _recognizer.OnPhraseRecognized += (text) => {
@@ -133,19 +125,22 @@ public class VoiceHandler : IDisposable {
                 });
             };
             
-            _recognizer.OnPartialResult += (text) => {
-                if (string.IsNullOrWhiteSpace(text) || text == _lastPartialText || text.Length < 2) return;
+            _recognizer.OnPartialResult += text => {
+                if (string.IsNullOrWhiteSpace(text) || text.Length < 2) return;
+                if (_lastPartialText == text) return;
+
                 _lastPartialText = text;
                 string captured = text;
                 _mainThreadActions.Enqueue(() => {
-                    _log.LogInfo($"[Partial]: {captured}");
                     _eventHandler?.HandleSpeech(captured, false);
                 });
             };
 
             _recognizer.Start();
-        } catch (Exception ex) {
-            _log.LogError($"Failed to start Voice Recognizer: {ex.Message}");
+            _log.LogInfo($"[VoiceCurse] Vosk Recognizer started.");
+        }
+        catch (Exception ex) {
+            _log.LogError($"Failed to start Vosk Recognizer: {ex.Message}");
         }
     }
 
