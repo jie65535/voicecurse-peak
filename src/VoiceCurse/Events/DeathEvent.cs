@@ -6,8 +6,8 @@ namespace VoiceCurse.Events;
 public class DeathEvent(Config config) : VoiceEventBase(config) {
     private readonly HashSet<string> _deathKeywords = [
         "die", "death", "dead", "suicide", "kill", "deceased", "skeleton", 
-        "skull", "bones", "perish", "demise", "expire", 
-        "fatal", "mortality", "mortal", "slain", "dying",
+        "skull", "bone", "perish", "demise", "expire", 
+        "fatal", "mortal", "slain", "dying",
         "corpse", "cadaver", "lifeless", "cease", "extinct", "eliminate",
         "terminate", "execute", "obliterate", "annihilate", "eradicate",
         "end", "finish", "doom", "grave", "burial",

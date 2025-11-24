@@ -48,28 +48,28 @@ public class TransmuteEvent(Config config) : VoiceEventBase(config) {
         return true;
     }
 
-    // TODO: Fix non host backpack despawning, items duplicate but are not removed from backpack from non host players
-    // This functionality works for DropEvent for some reason, but not here. Non host players have their backpack successfully emptied.
     private void TransmuteInventory(Character player, string[] possibleTargets) {
         int countToSpawn = 0;
+        Vector3 voidPosition = new(0, -5000, 0);
         
-        if (player.player?.itemSlots != null) {
-            foreach (ItemSlot slot in player.player.itemSlots) {
-                if (slot.IsEmpty()) continue;
-                countToSpawn++;
-                slot.EmptyOut();
-            }
+        for (byte i = 0; i < 3; i++) {
+            ItemSlot slot = player.player.GetItemSlot(i);
+            if (slot == null || slot.IsEmpty()) continue;
+            
+            countToSpawn++;
+            player.refs.items.photonView.RPC("DropItemFromSlotRPC", RpcTarget.All, i, voidPosition);
         }
 
-        ItemSlot? backpackSlot = player.player?.GetItemSlot(3);
+        ItemSlot backpackSlot = player.player.GetItemSlot(3);
         if (backpackSlot != null && !backpackSlot.IsEmpty()) {
             if (backpackSlot.data.TryGetDataEntry(DataEntryKey.BackpackData, out BackpackData backpackData)) {
                 countToSpawn += backpackData.FilledSlotCount();
             }
+            
             countToSpawn++;
-            backpackSlot.EmptyOut();
+            player.refs.items.photonView.RPC("DropItemFromSlotRPC", RpcTarget.All, (byte)3, voidPosition);
         }
-        
+
         if (countToSpawn == 0) countToSpawn = 1;
 
         Vector3 spawnOrigin = player.Center;
