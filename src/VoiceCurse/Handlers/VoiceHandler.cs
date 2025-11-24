@@ -26,6 +26,7 @@ public class VoiceHandler : IDisposable {
     private EventHandler? _eventHandler;
     private NetworkHandler? _networker;
     private Model? _voskModel;
+    
     private VoiceHook? _activeHook;
         
     private readonly ConcurrentQueue<Action> _mainThreadActions = new();
@@ -60,10 +61,6 @@ public class VoiceHandler : IDisposable {
         } else {
             _log.LogError($"Vosk model not found at: {modelPath}");
         }
-
-        if (_voskModel != null) {
-            SetupVoiceRecognition(AudioSettings.outputSampleRate);
-        }
     }
 
     public void Update() {
@@ -90,19 +87,20 @@ public class VoiceHandler : IDisposable {
     }
 
     public void OnPhotonVoiceReady(Recorder recorder, LocalVoice voice) {
-        int photonRate = 48000; 
+        int samplingRate = 48000; 
         if (voice.Info.SamplingRate > 0) {
-            photonRate = voice.Info.SamplingRate;
+            samplingRate = voice.Info.SamplingRate;
         }
 
-        _log.LogInfo($"[VoiceCurse] Photon Voice Ready. Sampling Rate: {photonRate} Hz");
+        _log.LogInfo($"[VoiceCurse] Photon Voice Ready. Using Stream Rate: {samplingRate} Hz");
 
-        SetupVoiceRecognition(photonRate);
+        SetupVoiceRecognition(samplingRate);
         
         if (_recognizer is VoskVoiceRecognizer && voice is LocalVoiceAudio<float> floatVoice) {
             floatVoice.AddPostProcessor(new VoiceProcessor(_recognizer));
             _log.LogInfo("[VoiceCurse] Audio Processor Injected successfully!");
-        } else if (_recognizer is not VoskVoiceRecognizer) {
+        } 
+        else if (_recognizer is not VoskVoiceRecognizer) {
             _log.LogInfo($"[VoiceCurse] Processor skipped for {_recognizer?.GetType().Name} (Native handling).");
         }
         else {
@@ -112,25 +110,38 @@ public class VoiceHandler : IDisposable {
 
     private void SetupVoiceRecognition(int sampleRate) {
         if (_recognizer != null) return;
-        
-        if (Application.platform == RuntimePlatform.WindowsPlayer) {
+        bool forceVosk = false; 
+
+        if (!forceVosk && Application.platform == RuntimePlatform.WindowsPlayer) {
             try {
-                _recognizer = new WindowsVoiceRecognizer();
-                AttachEvents();
-                _recognizer.Start();
+                _log.LogInfo("[VoiceCurse] Attempting to start Windows Native Speech...");
+                WindowsVoiceRecognizer winRecognizer = new();
+                
+                winRecognizer.OnPhraseRecognized += HandleRecognized;
+                winRecognizer.OnPartialResult += HandlePartial;
+                
+                winRecognizer.Start();
+                
+                _recognizer = winRecognizer;
                 return;
             }
             catch (Exception e) {
-                _log.LogWarning($"Could not start Windows Speech (falling back to Vosk): {e.Message}");
+                _log.LogWarning($"[VoiceCurse] Windows Speech failed to start: {e.Message}");
+                _log.LogWarning("[VoiceCurse] Falling back to Vosk...");
+                _recognizer = null;
             }
         }
 
-        if (_voskModel == null) return;
+        if (_voskModel == null) {
+            _log.LogError("[VoiceCurse] Cannot fall back to Vosk: Model is null.");
+            return;
+        }
         
         try {
             _recognizer = new VoskVoiceRecognizer(_voskModel, sampleRate);
             AttachEvents();
             _recognizer.Start();
+            _log.LogInfo($"[VoiceCurse] Vosk fallback initialized at {sampleRate} Hz.");
         }
         catch (Exception ex) {
             _log.LogError($"Failed to start Vosk Recognizer: {ex.Message}");
@@ -139,26 +150,28 @@ public class VoiceHandler : IDisposable {
     
     private void AttachEvents() {
         if (_recognizer == null) return;
-    
-        _recognizer.OnPhraseRecognized += (text) => {
-            _lastPartialText = "";
-            _mainThreadActions.Enqueue(() => {
-                _log.LogInfo($"[Recognized]: {text}");
-                _eventHandler?.HandleSpeech(text, true);
-            });
-        };
+        _recognizer.OnPhraseRecognized += HandleRecognized;
+        _recognizer.OnPartialResult += HandlePartial;
+    }
 
-        _recognizer.OnPartialResult += (text) => {
-            if (string.IsNullOrWhiteSpace(text) || text.Length < 2) return;
-            if (_lastPartialText == text) return; 
+    private void HandleRecognized(string text) {
+        _lastPartialText = "";
+        _mainThreadActions.Enqueue(() => {
+            _log.LogInfo($"[Recognized]: {text}");
+            _eventHandler?.HandleSpeech(text, true);
+        });
+    }
 
-            _lastPartialText = text;
-            string captured = text;
+    private void HandlePartial(string text) {
+        if (string.IsNullOrWhiteSpace(text) || text.Length < 2) return;
+        if (_lastPartialText == text) return;
 
-            _mainThreadActions.Enqueue(() => {
-                _eventHandler?.HandleSpeech(captured, false);
-            });
-        };
+        _lastPartialText = text;
+        string captured = text;
+        _mainThreadActions.Enqueue(() => {
+            _log.LogInfo($"[Partial]: {captured}");
+            _eventHandler?.HandleSpeech(captured, false);
+        });
     }
 
     public void Dispose() {

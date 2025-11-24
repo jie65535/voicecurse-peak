@@ -7,6 +7,7 @@ namespace VoiceCurse.Voice;
 
 public class WindowsVoiceRecognizer : IVoiceRecognizer {
     private DictationRecognizer? _dictationRecognizer;
+    private bool _isStopping;
 
     public event Action<string>? OnPhraseRecognized;
     public event Action<string>? OnPartialResult;
@@ -20,41 +21,53 @@ public class WindowsVoiceRecognizer : IVoiceRecognizer {
     public void Start() {
         if (_dictationRecognizer != null) return;
 
-        try {
-            _dictationRecognizer = new DictationRecognizer();
-            
-            _dictationRecognizer.DictationResult += (text, _) => {
-                OnPhraseRecognized?.Invoke(text);
-            };
-            
-            _dictationRecognizer.DictationHypothesis += text => {
-                OnPartialResult?.Invoke(text);
-            };
+        _dictationRecognizer = new DictationRecognizer();
+        _isStopping = false;
 
-            _dictationRecognizer.DictationError += (error, hresult) => {
-                Debug.LogError($"[VoiceCurse] Windows Speech Error: {error} (Code: {hresult})");
-            };
+        _dictationRecognizer.DictationResult += (text, _) => {
+            OnPhraseRecognized?.Invoke(text);
+        };
+        
+        _dictationRecognizer.DictationHypothesis += text => {
+            OnPartialResult?.Invoke(text);
+        };
+        
+        _dictationRecognizer.DictationComplete += cause => {
+            if (_isStopping) return;
+            if (cause == DictationCompletionCause.Canceled) {
+                Debug.LogError("[VoiceCurse] Windows Speech Canceled. This usually means microphone access was denied or the device is unavailable.");
+                return;
+            }
 
+            if (cause != DictationCompletionCause.Complete) {
+                Debug.LogWarning($"[VoiceCurse] Dictation stopped: {cause}. Restarting...");
+            }
+            
             _dictationRecognizer.Start();
-            Debug.Log("[VoiceCurse] Windows Native Speech Initialized.");
-        }
-        catch (Exception e) {
-            Debug.LogError($"[VoiceCurse] Failed to start Windows Speech: {e.Message}");
-        }
+        };
+
+        _dictationRecognizer.DictationError += (error, hresult) => {
+            Debug.LogError($"[VoiceCurse] Windows Speech Error: {error} (Code: {hresult})");
+        };
+
+        _dictationRecognizer.Start();
+        Debug.Log("[VoiceCurse] Windows Native Speech Initialized.");
     }
 
     public void FeedAudio(short[] pcmData, int length) { }
 
     public void Stop() {
-        if (_dictationRecognizer is { Status: SpeechSystemStatus.Running }) {
+        _isStopping = true;
+        if (_dictationRecognizer != null && _dictationRecognizer.Status == SpeechSystemStatus.Running) {
             _dictationRecognizer.Stop();
         }
     }
 
     public void Dispose() {
         Stop();
-        if (_dictationRecognizer == null) return;
-        _dictationRecognizer.Dispose();
-        _dictationRecognizer = null;
+        if (_dictationRecognizer != null) {
+            _dictationRecognizer.Dispose();
+            _dictationRecognizer = null;
+        }
     }
 }
