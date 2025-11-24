@@ -49,7 +49,7 @@ public class TransmuteEvent(Config config) : VoiceEventBase(config) {
     }
 
     private void TransmuteInventory(Character player, string[] possibleTargets) {
-        int countToSpawn = 0;
+        int countToSpawn = 1;
         Vector3 voidPosition = new(0, -5000, 0);
         
         for (byte i = 0; i < 3; i++) {
@@ -69,8 +69,6 @@ public class TransmuteEvent(Config config) : VoiceEventBase(config) {
             countToSpawn++;
             player.refs.items.photonView.RPC("DropItemFromSlotRPC", RpcTarget.All, (byte)3, voidPosition);
         }
-
-        if (countToSpawn == 0) countToSpawn = 1;
 
         Vector3 spawnOrigin = player.Center;
 
