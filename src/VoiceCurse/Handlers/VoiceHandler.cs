@@ -8,7 +8,6 @@ using Photon.Pun;
 using Photon.Voice;
 using Photon.Voice.PUN;
 using Photon.Voice.Unity;
-using UnityEngine;
 using VoiceCurse.Interfaces;
 using VoiceCurse.Voice;
 using Vosk;
@@ -26,9 +25,7 @@ public class VoiceHandler : IDisposable {
     private EventHandler? _eventHandler;
     private NetworkHandler? _networker;
     private Model? _voskModel;
-    
-    private int _currentSampleRate;
-    
+
     private VoiceHook? _activeHook;
         
     private readonly ConcurrentQueue<Action> _mainThreadActions = new();
@@ -62,10 +59,6 @@ public class VoiceHandler : IDisposable {
             }
         } else {
             _log.LogError($"Vosk model not found at: {modelPath}");
-        }
-
-        if (_voskModel != null) {
-            SetupVoiceRecognition(AudioSettings.outputSampleRate);
         }
     }
 
@@ -132,12 +125,13 @@ public class VoiceHandler : IDisposable {
                 _lastPartialText = text;
                 string captured = text;
                 _mainThreadActions.Enqueue(() => {
+                    _log.LogInfo($"[Partial]: {captured}"); 
                     _eventHandler?.HandleSpeech(captured, false);
                 });
             };
 
             _recognizer.Start();
-            _log.LogInfo($"[VoiceCurse] Vosk Recognizer started.");
+            _log.LogInfo($"[VoiceCurse] Vosk Recognizer started at {sampleRate} Hz.");
         }
         catch (Exception ex) {
             _log.LogError($"Failed to start Vosk Recognizer: {ex.Message}");
