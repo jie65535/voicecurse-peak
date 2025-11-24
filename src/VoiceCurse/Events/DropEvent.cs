@@ -4,12 +4,15 @@ using UnityEngine;
 
 namespace VoiceCurse.Events;
 
+//TODO: Causes the backpack to duplicate if non host?
 public class DropEvent(Config config) : VoiceEventBase(config) {
     private readonly HashSet<string> _keywords = [
         "drop", "oops", "whoops", "butterfingers", "fumble", 
-        "release", "discard", "off"
+        "release", "discard", "off", "loss", "lose", "let go",
+        "slip away", "misplace", "clumsy", "accident", "unhand",
+        "relinquish", "surrender", "abandon", "ditched", "ditch",
+        "shed", "cast", "toss", "throw away", "get rid"
     ];
-
     protected override IEnumerable<string> GetKeywords() => _keywords;
 
     protected override bool OnExecute(Character player, string spokenWord, string fullSentence, string matchedKeyword) {

@@ -6,7 +6,10 @@ namespace VoiceCurse.Events;
 public class SlipEvent(Config config) : VoiceEventBase(config) {
     private readonly HashSet<string> _keywords = [
         "fuck", "asshole", "bastard", "bitch", "fag", "damn", 
-        "crap", "slip", "slide", "trip", "fall", "fell"
+        "crap", "slip", "slide", "trip", "fall", "fell",
+        "stumble", "tumble", "topple", "stagger", "wobble",
+        "skid", "slippery", "slick", "peel",
+        "unbalanced", "unstable", "tilting", "tilt"
     ];
 
     private static AudioClip? _cachedTripSound;

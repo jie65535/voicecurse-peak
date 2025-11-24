@@ -48,6 +48,8 @@ public class TransmuteEvent(Config config) : VoiceEventBase(config) {
         return true;
     }
 
+    // TODO: Fix non host backpack despawning, items duplicate but are not removed from backpack from non host players
+    // This functionality works for DropEvent for some reason, but not here. Non host players have their backpack successfully emptied.
     private void TransmuteInventory(Character player, string[] possibleTargets) {
         int countToSpawn = 0;
         

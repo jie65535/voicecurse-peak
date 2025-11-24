@@ -9,8 +9,13 @@ public class LaunchEvent(Config config) : VoiceEventBase(config) {
         "launch", "fly", "blast", "boost", "ascend", "lift", "up", 
         "cannon", "canon", "rocket", "soar", "jump", "spring", "catapult",
         "fling", "hurl", "propel", "shoot", "skyrocket", "takeoff",
-        "left", "right", "forward", "forwards", "backward", "backwards", "back"
+        "left", "right", "forward", "forwards", "backward", "backwards", "back",
+        "yeet", "lob", "pitch", "toss", "chuck", "heave",
+        "airborne", "levitate", "hover", "elevate", "rise",
+        "vault", "leap", "bound", "hop", "eject",
+        "thrust", "projectile", "missile", "space", "orbit"
     ];
+
     
     private static GameObject? _cachedLaunchSFX;
 

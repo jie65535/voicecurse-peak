@@ -6,13 +6,14 @@ namespace VoiceCurse.Events;
 
 public class AfflictionEvent(Config config) : VoiceEventBase(config) {
     private static readonly Dictionary<CharacterAfflictions.STATUSTYPE, string[]> KeyWords = new() {
-        { CharacterAfflictions.STATUSTYPE.Injury, ["damage", "hurt", "injury", "injured", "pain", "harm", "wound", "hit", "bleed", "bruise", "cut", "slash", "slashed"] },
-        { CharacterAfflictions.STATUSTYPE.Hunger, ["hunger", "hungry", "starving", "starve", "food", "malnourishment", "famished"] },
-        { CharacterAfflictions.STATUSTYPE.Cold,   ["freezing", "cold", "blizzard", "shiver", "ice", "frozen", "chill", "frigid", "winter"] },
-        { CharacterAfflictions.STATUSTYPE.Hot,    ["hot", "burning", "fire", "melt", "scorching", "heat", "burn", "pyro", "flame", "summer", "cook"] },
-        { CharacterAfflictions.STATUSTYPE.Poison, ["poison", "sick", "vomit", "toxic", "venom", "contaminate"] },
-        { CharacterAfflictions.STATUSTYPE.Spores, ["spore"]},
+        { CharacterAfflictions.STATUSTYPE.Injury, ["damage", "hurt", "injury", "injured", "pain", "harm", "wound", "hit", "bleed", "bruise", "cut", "slash", "slashed", "orange", "ache", "sore", "trauma", "gash", "scrape", "laceration", "tear", "torn", "broken", "fracture", "sprain", "puncture", "stab", "stabbed", "maim", "maimed", "cripple", "crippled", "batter", "battered"] },
+        { CharacterAfflictions.STATUSTYPE.Hunger, ["hunger", "hungry", "starving", "starve", "food", "malnourishment", "famished", "eat", "snack", "meal", "yellow", "appetite", "crave", "craving", "ravenous", "peckish", "feast", "feed", "sustenance", "nourishment", "nutrition", "consume"] },
+        { CharacterAfflictions.STATUSTYPE.Cold,   ["freezing", "cold", "blizzard", "shiver", "ice", "frozen", "chill", "frigid", "winter", "blue", "frost", "frosty", "arctic", "polar", "glacier", "icicle", "hypothermia", "numb", "shivering", "freeze"] },
+        { CharacterAfflictions.STATUSTYPE.Hot,    ["hot", "burning", "fire", "melt", "scorching", "heat", "burn", "pyro", "flame", "summer", "cook", "hell", "red", "sizzle", "sear", "searing", "swelter", "sweltering", "boil", "boiling", "roast", "roasting", "bake", "baking", "scald", "scalding", "inferno", "blaze", "blazing", "ignite", "ignited", "combust", "combustion", "incinerate"] },
+        { CharacterAfflictions.STATUSTYPE.Poison, ["poison", "sick", "vomit", "toxic", "venom", "contaminate", "purple", "nausea", "nauseous", "intoxicate", "intoxicated", "pollute", "polluted", "taint", "tainted", "corrupt", "corrupted", "disease", "diseased", "ill", "illness", "ailment", "malady"] },
+        { CharacterAfflictions.STATUSTYPE.Spores, ["spore"] }
     };
+
     
     private readonly Dictionary<string, CharacterAfflictions.STATUSTYPE> _wordToType = 
         KeyWords.SelectMany(g => g.Value

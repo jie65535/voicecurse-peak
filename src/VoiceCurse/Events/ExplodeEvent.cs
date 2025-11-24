@@ -9,7 +9,7 @@ public class ExplodeEvent(Config config) : VoiceEventBase(config) {
         "explosion", "dynamite", "grenade", "explodes", "explode", 
         "blowing", "blew", "blow", "boom", "nuke", "bomb", "bombs", 
         "nuclear", "detonate", "detonation", "explosive", "blast",
-        "kaboom"
+        "kaboom", "burst"
     ];
         
     private static GameObject? _cachedExplosionPrefab;
