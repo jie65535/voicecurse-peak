@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace VoiceCurse.Events;
 
-//TODO: Causes the backpack to duplicate if non host?
 public class DropEvent(Config config) : VoiceEventBase(config) {
     private readonly HashSet<string> _keywords = [
         "drop", "oops", "whoops", "butterfingers", "fumble", 
@@ -17,10 +16,12 @@ public class DropEvent(Config config) : VoiceEventBase(config) {
 
     protected override bool OnExecute(Character player, string spokenWord, string fullSentence, string matchedKeyword) {
         if (player.data.dead) return false;
+        
         string? backpackPrefab = ScatterBackpackContents(player);
-
+        
         if (!string.IsNullOrEmpty(backpackPrefab)) {
-            Vector3 dropPos = player.Center + player.transform.forward * 0.5f + Vector3.up * 0.5f;
+            Vector3 dropPos = player.Center + player.transform.forward * 0.5f + Vector3.up * 0.2f;
+            
             GameObject myBag = PhotonNetwork.Instantiate(
                 "0_Items/" + backpackPrefab, 
                 dropPos, 
@@ -32,7 +33,7 @@ public class DropEvent(Config config) : VoiceEventBase(config) {
                 pv.RPC("SetKinematicRPC", RpcTarget.All, false, dropPos, Quaternion.identity);
             }
         }
-
+        
         player.refs.items.DropAllItems(includeBackpack: false);
         
         if (!player.player.GetItemSlot(3).IsEmpty()) {

@@ -47,7 +47,26 @@ public abstract class VoiceEventBase(Config config) : IVoiceEvent {
         }
         
         string eventName = GetType().Name.Replace("Event", "");
-        NetworkHandler.SendCurseEvent(spokenWord, matchedKeyword, eventName, ExecutionDetail, localChar.Center);
+
+        string textToSend = fullSentence;
+        int matchIndex = fullSentence.LastIndexOf(matchedKeyword, System.StringComparison.OrdinalIgnoreCase);
+
+        if (matchIndex != -1) {
+            int start = matchIndex;
+            int end = matchIndex + matchedKeyword.Length;
+            
+            while (start > 0 && fullSentence[start - 1] != ' ') {
+                start--;
+            }
+            
+            while (end < fullSentence.Length && fullSentence[end] != ' ') {
+                end++;
+            }
+            
+            textToSend = fullSentence.Substring(start, end - start);
+        }
+        
+        NetworkHandler.SendCurseEvent(textToSend, matchedKeyword, eventName, ExecutionDetail, localChar.Center);
 
         return success;
     }
