@@ -28,6 +28,19 @@ public class Config {
     public ConfigEntry<string> AfflictionKeywordsPoison { get; private set; }
     public ConfigEntry<string> AfflictionKeywordsSpores { get; private set; }
 
+    // Event: Transmute
+    public ConfigEntry<bool> TransmuteEnabled { get; private set; }
+    
+    // Individual Transmute Toggles
+    public ConfigEntry<bool> TransmuteMilkEnabled { get; private set; }
+    public ConfigEntry<bool> TransmuteCactusEnabled { get; private set; }
+    public ConfigEntry<bool> TransmuteCoconutEnabled { get; private set; }
+    public ConfigEntry<bool> TransmuteAppleEnabled { get; private set; }
+    public ConfigEntry<bool> TransmuteBananaEnabled { get; private set; }
+    public ConfigEntry<bool> TransmuteEggEnabled { get; private set; }
+    public ConfigEntry<bool> TransmuteFruitEnabled { get; private set; }
+    public ConfigEntry<bool> TransmuteMushroomEnabled { get; private set; }
+
     public Config(ConfigFile configFile) {
         // Global
         EnableDebugLogs = configFile.Bind("Global", "EnableDebugLogs", true, "Enable debug logs for speech detection.");
@@ -52,5 +65,17 @@ public class Config {
         AfflictionKeywordsHot = configFile.Bind("Event.Affliction", "KeywordsHot", "hot, burning, fire, melt, scorching, heat, burn, pyro, flame, summer, cook, hell, red, sizzle, sear, swelter, boil, roast, bake, baking, scald, inferno, blaze, blazing, ignite, combust, incinerate", "Keywords that trigger hot status.");
         AfflictionKeywordsPoison = configFile.Bind("Event.Affliction", "KeywordsPoison", "poison, sick, vomit, toxic, venom, contaminate, purple, nausea, nauseous, intoxicate, pollute, taint, corrupt, disease, ill, ailment, malady", "Keywords that trigger poison status.");
         AfflictionKeywordsSpores = configFile.Bind("Event.Affliction", "KeywordsSpores", "spore, pink", "Keywords that trigger spore status.");
+
+        // Event: Transmute
+        TransmuteEnabled = configFile.Bind("Event.Transmute", "Enabled", true, "Enable the Transmute event.");
+        
+        TransmuteMilkEnabled = configFile.Bind("Event.Transmute", "EnableMilk", true, "Enable 'milk/calcium' -> Fortified Milk");
+        TransmuteCactusEnabled = configFile.Bind("Event.Transmute", "EnableCactus", true, "Enable 'cactus' -> Cactus");
+        TransmuteCoconutEnabled = configFile.Bind("Event.Transmute", "EnableCoconut", true, "Enable 'coconut' -> Coconut");
+        TransmuteAppleEnabled = configFile.Bind("Event.Transmute", "EnableApple", true, "Enable 'apple/berry' -> Crispberries");
+        TransmuteBananaEnabled = configFile.Bind("Event.Transmute", "EnableBanana", true, "Enable 'banana' -> Peel");
+        TransmuteEggEnabled = configFile.Bind("Event.Transmute", "EnableEgg", true, "Enable 'egg' -> Egg");
+        TransmuteFruitEnabled = configFile.Bind("Event.Transmute", "EnableFruit", true, "Enable 'fruit' -> Random Fruit");
+        TransmuteMushroomEnabled = configFile.Bind("Event.Transmute", "EnableMushroom", true, "Enable 'mushroom/fungus' -> Mushroom");
     }
 }

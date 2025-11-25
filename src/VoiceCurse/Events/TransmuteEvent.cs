@@ -1,48 +1,72 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using Photon.Pun;
+using Random = UnityEngine.Random;
 
 namespace VoiceCurse.Events;
 
-public class TransmuteEvent(Config config) : VoiceEventBase(config) {
-    private static readonly List<(string Name, string[] Triggers, string[] Targets)> TransmuteDefinitions = [
-        ("Milk",     ["milk", "calcium"], ["Fortified Milk"]),
-        ("Cactus",   ["cactus", "cacti"], ["Cactus"]),
-        ("Coconut",  ["coconut"], ["Coconut"]),
-        ("Apple",    ["apple", "berry"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry"]),
-        ("Banana",   ["banana"], ["Berrynana Peel Yellow"]),
-        ("Egg",      ["egg"], ["Egg"]),
-        ("Fruit",    ["fruit"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry", "Kingberry Purple", "Kingberry Yellow", "Kingberry Green", "Berrynana Brown", "Berrynana Yellow", "Berrynana Pink", "Berrynana Blue"]),
-        ("Mushroom", ["fungus", "mushroom", "fungi", "funghi", "shroom"], ["Mushroom Normie"])
-    ];
-    
-    private readonly Dictionary<string, (string Name, string[] Targets)> _transmuteLookup = 
-        TransmuteDefinitions
-            .SelectMany(def => def.Triggers.Select(trigger => (Trigger: trigger, Data: (def.Name, def.Targets))))
-            .ToDictionary(x => x.Trigger, x => x.Data);
-
+public class TransmuteEvent : VoiceEventBase {
+    private readonly List<(string Name, string[] Triggers, string[] Targets, Func<bool> IsEnabled)> _definitions;
+    private readonly Dictionary<string, (string Name, string[] Targets, Func<bool> IsEnabled)> _transmuteLookup = new();
     private readonly Dictionary<string, Item?> _itemCache = new();
+    
     private static readonly Regex NameCleaner = new(@"\s*\((\d+|Clone)\)", RegexOptions.Compiled);
 
-    protected override IEnumerable<string> GetKeywords() => _transmuteLookup.Keys;
+    public TransmuteEvent(Config config) : base(config) {
+        _definitions = [
+            ("Milk",     ["milk", "calcium"], ["Fortified Milk"], () => config.TransmuteMilkEnabled.Value),
+            ("Cactus",   ["cactus", "cacti"], ["Cactus"], () => config.TransmuteCactusEnabled.Value),
+            ("Coconut",  ["coconut"], ["Coconut"], () => config.TransmuteCoconutEnabled.Value),
+            ("Apple",    ["apple", "berry"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry"], () => config.TransmuteAppleEnabled.Value),
+            ("Banana",   ["banana"], ["Berrynana Peel Yellow"], () => config.TransmuteBananaEnabled.Value),
+            ("Egg",      ["egg"], ["Egg"], () => config.TransmuteEggEnabled.Value),
+            ("Fruit",    ["fruit"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry", "Kingberry Purple", "Kingberry Yellow", "Kingberry Green", "Berrynana Brown", "Berrynana Yellow", "Berrynana Pink", "Berrynana Blue"], () => config.TransmuteFruitEnabled.Value),
+            ("Mushroom", ["fungus", "mushroom", "fungi", "funghi", "shroom"], ["Mushroom Normie"], () => config.TransmuteMushroomEnabled.Value)
+        ];
+        
+        foreach ((string Name, string[] Triggers, string[] Targets, Func<bool> IsEnabled) def in _definitions) {
+            foreach (string trigger in def.Triggers) {
+                _transmuteLookup[trigger] = (def.Name, def.Targets, def.IsEnabled);
+            }
+        }
+    }
+
+    protected override IEnumerable<string> GetKeywords() {
+        return Config.TransmuteEnabled.Value ? _definitions.Where(d => d.IsEnabled()).SelectMany(d => d.Triggers) : [];
+    }
 
     protected override bool OnExecute(Character player, string spokenWord, string fullSentence, string matchedKeyword) {
+        if (!Config.TransmuteEnabled.Value) return false;
         if (player.data.dead) return false;
         
-        (string Name, string[] Targets)? match = null;
+        string[]? targets = null;
+        string? ruleName = null;
         
-        if (_transmuteLookup.TryGetValue(matchedKeyword, out (string Name, string[] Targets) foundData)) {
-            match = foundData;
-        } else {
-            string? key = _transmuteLookup.Keys.FirstOrDefault(fullSentence.Contains);
-            if (key != null) match = _transmuteLookup[key];
+        if (_transmuteLookup.TryGetValue(matchedKeyword, out (string Name, string[] Targets, Func<bool> IsEnabled) foundData)) {
+            if (foundData.IsEnabled()) {
+                ruleName = foundData.Name;
+                targets = foundData.Targets;
+            }
+        } 
+
+        if (targets == null) {
+            string? validKey = _transmuteLookup.Keys.FirstOrDefault(k => 
+                fullSentence.Contains(k) && _transmuteLookup[k].IsEnabled());
+            
+            if (validKey != null) {
+                (string Name, string[] Targets, Func<bool> IsEnabled) data = _transmuteLookup[validKey];
+                ruleName = data.Name;
+                targets = data.Targets;
+            }
         }
 
-        if (match == null) return false;
-        ExecutionDetail = match.Value.Name;
-        TransmuteInventory(player, match.Value.Targets);
+        if (targets == null || targets.Length == 0) return false;
+        ExecutionDetail = ruleName; 
+        
+        TransmuteInventory(player, targets);
             
         player.photonView.RPC("RPCA_Die", RpcTarget.All, player.Center);
         return true;
