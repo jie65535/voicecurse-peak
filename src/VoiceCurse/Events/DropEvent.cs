@@ -21,7 +21,7 @@ public class DropEvent(Config config) : VoiceEventBase(config) {
     public override void PlayEffects(Character origin, Vector3 position) {
         if (!PhotonNetwork.IsMasterClient) return;
         if (!origin || origin.data.dead) return;
-        
+
         ScatterBackpackContents(origin);
 
         Transform hip = origin.GetBodypart(BodypartType.Hip).transform;
@@ -32,9 +32,12 @@ public class DropEvent(Config config) : VoiceEventBase(config) {
         
         for (byte i = 0; i < 4; i++) {
             if (origin.player.GetItemSlot(i).IsEmpty()) continue;
+            
             origin.refs.items.photonView.RPC("DropItemFromSlotRPC", RpcTarget.All, i, dropPos);
             dropPos += Vector3.up * 0.3f;
         }
+
+        origin.refs.items.photonView.RPC("EquipSlotRpc", RpcTarget.All, -1, -1);
     }
 
     private static void ScatterBackpackContents(Character player) {
