@@ -23,16 +23,15 @@ public class DropEvent(Config config) : VoiceEventBase(config) {
         if (!origin || origin.data.dead) return;
 
         ScatterBackpackContents(origin);
-
         Transform hip = origin.GetBodypart(BodypartType.Hip).transform;
         Vector3 fwd = hip.forward;
+        
         if (Vector3.Dot(fwd, Vector3.up) < 0f) fwd = -fwd;
         
         Vector3 dropPos = origin.Center + fwd * 0.6f + Vector3.up * 0.5f;
         
         for (byte i = 0; i < 4; i++) {
             if (origin.player.GetItemSlot(i).IsEmpty()) continue;
-            
             origin.refs.items.photonView.RPC("DropItemFromSlotRPC", RpcTarget.All, i, dropPos);
             dropPos += Vector3.up * 0.3f;
         }
