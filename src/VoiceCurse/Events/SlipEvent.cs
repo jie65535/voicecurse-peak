@@ -25,7 +25,6 @@ public class SlipEvent(Config config) : VoiceEventBase(config) {
         if (!Config.SlipEnabled.Value) return false;
         if (player.data.dead || player.data.fullyPassedOut) return false;
         
-        // Use configured stun duration
         player.Fall(Config.SlipStunDuration.Value); 
         
         Vector3 lookDir = player.data.lookDirection_Flat;
