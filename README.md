@@ -1,31 +1,28 @@
 # VoiceCurse
 
-Describe your project here!
+Mod that triggers gameplay events based on voice input. 
+It uses an offline voice recognition library to detect you saying specific words or phrases, which then activate various in-game effects.
 
-## Template Instructions
+## Features
 
-You can remove this section after you've set up your project.
+The keywords themselves can all be configured to your own preference, although there is a lot of them. First, let's go over all possible events.
 
-Next steps:
+| Events     | Keyword Examples                    | Effect                                                                               |
+|------------|-------------------------------------|--------------------------------------------------------------------------------------|
+| Affliction | "hot", "cold", "ill", "sick"        | Gives you the affliction of the related keyword.                                     |
+| Death      | "die", "end", "bones", "skeleton"   | Kills you instantly.                                                                 |
+| Drop       | "oops", "release", "off", "lose"    | Drops all your items, including the items in your backpack.                          |
+| Explode    | "blow", "explode", "blast", "blast" | Makes you explode instantly, this causes damage to your surroundings too.            |
+| Launch     | "up", "down", "right", "cannon"     | Launches you in a specified direction if provided, otherwise randomly.               |
+| Sleep      | "rest", "tired", "exhausted", "nap" | Makes you pass out instantly.                                                        |
+| Slip       | "crap", "damn",  "trip", "fall"     | Causes you to trip like stepping on a banana.                                        |
+| Transmute  | "milk", "fruit", "apple", "banana"  | Causes you and your items to tranform into related objects, this kills you instantly |
+| Zombify    | "rot", "zombie", "ghoul", "bite"    | Turns you into a zombie.                                                             |
 
-- Create a copy of the `Config.Build.user.props.template` file and name it `Config.Build.user.props`
-  - This will automate copying your plugin assembly to `BepInEx/plugins/`
-  - Configure the paths to point to your game path and your `BepInEx/plugins/`
-  - Game assembly references should work if the path to the game is valid
-- Search `TODO` in the whole project to see what you should configure or modify
+> [!NOTE]
+> Note that the events are triggered when it detects the keyword *anywhere*.
+> This means that saying words like "gro**up**" will trigger the "up" launch event because "up" is contained within "group".
+> This applies to every keyword and is not functionality that can be disabled.
 
-### Thunderstore Packaging
-
-This template comes with Thunderstore packaging built-in, using [TCLI](<https://github.com/thunderstore-io/thunderstore-cli>).
-
-You can build Thunderstore packages by running:
-
-```sh
-dotnet build -c Release -target:PackTS -v d
-```
-
-> [!NOTE]  
-> You can learn about different build options with `dotnet build --help`.  
-> `-c` is short for `--configuration` and `-v d` is `--verbosity detailed`.
-
-The built package will be found at `artifacts/thunderstore/`.
+> [!TIP]
+> This means that saying safe words like "n**ice**" can trigger the cold affliction event because "ice" is a keyword. There are many such examples and this is the central challenge of using this mod.
