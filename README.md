@@ -1,6 +1,6 @@
 # VoiceCurse
 
-Mod that triggers gameplay events based on voice input. 
+Mod that triggers gameplay events based on what players are saying.
 It uses an offline voice recognition library to detect you saying specific words or phrases, which then activate various in-game effects.
 
 ## Features
@@ -19,10 +19,27 @@ The keywords themselves can all be configured to your own preference, although t
 | Transmute  | "milk", "fruit", "apple", "banana"  | Causes you and your items to tranform into related objects, this kills you instantly |
 | Zombify    | "rot", "zombie", "ghoul", "bite"    | Turns you into a zombie.                                                             |
 
-> [!NOTE]
-> Note that the events are triggered when it detects the keyword *anywhere*.
+> ### Note
+> Note that the events are triggered when it detects the keyword *anywhere* in the spoken sentence.
 > This means that saying words like "gro**up**" will trigger the "up" launch event because "up" is contained within "group".
 > This applies to every keyword and is not functionality that can be disabled.
-
-> [!TIP]
+> 
 > This means that saying safe words like "n**ice**" can trigger the cold affliction event because "ice" is a keyword. There are many such examples and this is the central challenge of using this mod.
+
+## Configuration
+
+All keywords can be configured (except of Transmute, which operates a bit differently), all events can be enabled or disabled, and certain aspects of events can be customized.
+
+You can modify the following settings for each event:
+
+* **Enabled:** Toggle specific events on or off.
+* **Keywords:** Custom comma-separated lists of trigger words for every event.
+* **Forces & Durations:** Adjust launch forces, explosion radius, stun durations, and damage percentages.
+* **Specific Toggles:** Enable or disable specific transmutation rules or mechanics.
+
+## Installation
+
+1.  Ensure BepInEx is installed.
+2.  Download the latest release of VoiceCurse.
+3.  Extract the contents into your game's `BepInEx/plugins` folder.
+4.  Run the game once to generate the configuration file.
