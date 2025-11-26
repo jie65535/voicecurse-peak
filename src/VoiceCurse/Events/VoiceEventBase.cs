@@ -9,7 +9,7 @@ namespace VoiceCurse.Events;
 public abstract class VoiceEventBase(Config config) : IVoiceEvent {
     protected readonly Config Config = config;
     private float _lastExecutionTime = -999f;
-
+    
     private float Cooldown => Config.GlobalCooldown.Value;
 
     protected string? ExecutionDetail { get; set; }
@@ -28,8 +28,10 @@ public abstract class VoiceEventBase(Config config) : IVoiceEvent {
         
         Character localChar = Character.localCharacter;
         if (!localChar || !localChar.gameObject.activeInHierarchy) return false;
-
+        
+        ExecutionDetail = null;
         bool success = false;
+        
         try {
             success = OnExecute(localChar, spokenWord, fullSentence, matchedKeyword);
         } catch (System.Exception e) {
@@ -39,9 +41,7 @@ public abstract class VoiceEventBase(Config config) : IVoiceEvent {
         }
 
         if (!success) return false;
-        
         _lastExecutionTime = Time.time;
-        ExecutionDetail = null;
         
         if (Config.EnableDebugLogs.Value) {
             Debug.Log($"[VoiceCurse] {GetType().Name} executed locally. Broadcasting event...");
