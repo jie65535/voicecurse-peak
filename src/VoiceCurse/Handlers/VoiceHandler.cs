@@ -92,23 +92,23 @@ public class VoiceHandler : IDisposable {
             streamSampleRate = voice.Info.SamplingRate;
         }
 
-        _log.LogInfo($"[VoiceCurse] Photon Stream Rate detected: {streamSampleRate} Hz");
-        SetupVoiceRecognition(streamSampleRate);
+        _log.LogInfo($"[VoiceCurse] Photon Input Rate: {streamSampleRate} Hz. Initializing Vosk at 16000 Hz.");
+        SetupVoiceRecognition();
         
         if (_recognizer is VoiceRecognizer && voice is LocalVoiceAudio<float> floatVoice) {
-            floatVoice.AddPostProcessor(new VoiceProcessor(_recognizer));
-            _log.LogInfo($"[VoiceCurse] Audio Processor attached. Listening at {streamSampleRate} Hz.");
+            floatVoice.AddPostProcessor(new VoiceProcessor(_recognizer, streamSampleRate));
+            _log.LogInfo($"[VoiceCurse] Audio Processor attached. Resampling {streamSampleRate} -> 16000 Hz.");
         } else {
             _log.LogWarning($"[VoiceCurse] Could not attach processor. Voice type: {voice.GetType().Name}");
         }
     }
 
-    private void SetupVoiceRecognition(int sampleRate) {
+    private void SetupVoiceRecognition() {
         if (_recognizer != null) return;
         if (_voskModel == null) return;
         
         try {
-            _recognizer = new VoiceRecognizer(_voskModel, sampleRate);
+            _recognizer = new VoiceRecognizer(_voskModel, 16000);
             
             _recognizer.OnPhraseRecognized += (text) => {
                 _lastPartialText = "";
@@ -131,7 +131,7 @@ public class VoiceHandler : IDisposable {
             };
 
             _recognizer.Start();
-            _log.LogInfo($"[VoiceCurse] Vosk Recognizer started at {sampleRate} Hz.");
+            _log.LogInfo("[VoiceCurse] Vosk Recognizer started.");
         }
         catch (Exception ex) {
             _log.LogError($"Failed to start Vosk Recognizer: {ex.Message}");

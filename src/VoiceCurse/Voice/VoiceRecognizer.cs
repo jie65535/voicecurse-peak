@@ -15,7 +15,8 @@ public class VoiceRecognizer : IVoiceRecognizer {
 
     public event Action<string>? OnPhraseRecognized;
     public event Action<string>? OnPartialResult;
-    
+    private const int MaxQueueSize = 50; 
+
     public VoiceRecognizer(Model model, float sampleRate) {
         try {
             _recognizer = new VoskRecognizer(model, sampleRate);
@@ -48,20 +49,27 @@ public class VoiceRecognizer : IVoiceRecognizer {
     }
 
     public void FeedAudio(short[] pcmData, int length) {
-        if (_isRunning) {
-            _audioQueue.Enqueue(pcmData);
+        if (!_isRunning) return;
+        if (_audioQueue.Count >= MaxQueueSize) {
+            while (_audioQueue.TryDequeue(out _)) { }
         }
+
+        _audioQueue.Enqueue(pcmData);
     }
 
     private void ProcessAudioLoop() {
         while (_isRunning) {
             if (_audioQueue.TryDequeue(out short[] data)) {
-                if (_recognizer.AcceptWaveform(data, data.Length)) {
-                    string jsonResult = _recognizer.Result();
-                    ExtractAndFire(jsonResult, isPartial: false);
-                } else {
-                    string partialJson = _recognizer.PartialResult();
-                    ExtractAndFire(partialJson, isPartial: true);
+                try {
+                    if (_recognizer.AcceptWaveform(data, data.Length)) {
+                        string jsonResult = _recognizer.Result();
+                        ExtractAndFire(jsonResult, isPartial: false);
+                    } else {
+                        string partialJson = _recognizer.PartialResult();
+                        ExtractAndFire(partialJson, isPartial: true);
+                    }
+                } catch (Exception e) {
+                    Debug.LogError($"[VoiceCurse] Vosk Error: {e.Message}");
                 }
             } else {
                 Thread.Sleep(10);

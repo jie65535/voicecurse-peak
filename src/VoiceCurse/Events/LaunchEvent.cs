@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,7 +12,7 @@ public class LaunchEvent(Config config) : VoiceEventBase(config) {
 
     private static HashSet<string> ParseKeywords(string configLine) {
         return configLine
-            .Split([','], StringSplitOptions.RemoveEmptyEntries)
+            .Split([','], System.StringSplitOptions.RemoveEmptyEntries)
             .Select(k => k.Trim().ToLowerInvariant())
             .Where(k => !string.IsNullOrWhiteSpace(k))
             .ToHashSet();
@@ -32,15 +31,35 @@ public class LaunchEvent(Config config) : VoiceEventBase(config) {
         
         Vector3 forwardDir = player.data.lookDirection_Flat.normalized;
         Vector3 rightDir = Vector3.Cross(Vector3.up, forwardDir);
-
-        Vector3 launchDirection = fullSentence switch {
-            _ when fullSentence.Contains("left") => -rightDir + Vector3.up * 0.2f,
-            _ when fullSentence.Contains("right") => rightDir + Vector3.up * 0.2f,
-            _ when fullSentence.Contains("backward") || fullSentence.Contains("backwards") || fullSentence.Contains("back") => -forwardDir + Vector3.up * 0.2f,
-            _ when fullSentence.Contains("forward") || fullSentence.Contains("forwards") => forwardDir + Vector3.up * 0.2f,
-            _ when fullSentence.Contains("up") => Vector3.up,
-            _ => GetRandomUpwardDirection()
-        };
+        Vector3 launchDirection;
+        string directionName;
+        
+        if (fullSentence.Contains("left")) {
+            directionName = "Left";
+            launchDirection = -rightDir + Vector3.up * 0.2f;
+        } 
+        else if (fullSentence.Contains("right")) {
+            directionName = "Right";
+            launchDirection = rightDir + Vector3.up * 0.2f;
+        }
+        else if (fullSentence.Contains("backward") || fullSentence.Contains("backwards") || fullSentence.Contains("back")) {
+            directionName = "Back";
+            launchDirection = -forwardDir + Vector3.up * 0.2f;
+        }
+        else if (fullSentence.Contains("forward") || fullSentence.Contains("forwards")) {
+            directionName = "Forward";
+            launchDirection = forwardDir + Vector3.up * 0.2f;
+        }
+        else if (fullSentence.Contains("up")) {
+            directionName = "Up";
+            launchDirection = Vector3.up;
+        }
+        else {
+            directionName = "Random";
+            launchDirection = GetRandomUpwardDirection();
+        }
+        
+        ExecutionDetail = directionName;
 
         launchDirection.Normalize();
         float launchForce = Random.Range(Config.LaunchForceLowerBound.Value, Config.LaunchForceHigherBound.Value);
