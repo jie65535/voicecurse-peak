@@ -40,7 +40,7 @@ public class VoiceHandler : IDisposable {
 
     private void Initialize(string pluginDir) {
         _log.LogInfo("Initializing VoiceCurse Manager...");
-        
+    
         if (Directory.Exists(pluginDir)) {
             SetDllDirectory(pluginDir);
         }
@@ -48,8 +48,8 @@ public class VoiceHandler : IDisposable {
         _eventHandler = new EventHandler(_config);
         _networker = new NetworkHandler();
         PhotonNetwork.AddCallbackTarget(_networker);
-        
-        string modelPath = Path.Combine(Paths.PluginPath, "VoiceCurse", "model-en-us");
+        string modelPath = Path.Combine(pluginDir, "model-en-us");
+
         if (Directory.Exists(modelPath)) {
             try {
                 _voskModel = new Model(modelPath);
