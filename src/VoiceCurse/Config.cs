@@ -87,7 +87,7 @@ public class Config {
         AfflictionEnabled = config.Bind("Event.Affliction", "Enabled", true, "Enable the Affliction event.");
         AfflictionMinPercent = config.Bind("Event.Affliction", "MinPercent", 0.2f, "The minimum percentage (0.0 to 1.0) of the status bar to fill when triggered.");
         AfflictionMaxPercent = config.Bind("Event.Affliction", "MaxPercent", 0.6f, "The maximum percentage (0.0 to 1.0) of the status bar to fill when triggered.");
-        AfflictionTemperatureSwapEnabled = config.Bind("Event.Affliction", "TemperatureSwapEnabled", true, "If enabled, triggering Hot will cure Cold (and vice versa) instead of just adding status.");
+        AfflictionTemperatureSwapEnabled = config.Bind("Event.Affliction", "TemperatureSwapEnabled", true, "If enabled, attempting to get rid of hot or cold by saying the opposite will just swap the existing effect to the new one and add on top of that to prevent cheesing it.");
         
         AfflictionKeywordsInjury = config.Bind("Event.Affliction", "KeywordsInjury", "damage, hurt, injury, injured, pain, harm, wound, hit, bleed, bruise, cut, slash, orange, ache, sore, trauma, gash, scrape, laceration, tear, torn, broken, fracture, sprain, puncture, stab, maim, cripple, batter", "Keywords that trigger physical injury.");
         AfflictionKeywordsHunger = config.Bind("Event.Affliction", "KeywordsHunger", "hunger, hungry, starving, starve, food, malnourishment, famished, eat, snack, meal, yellow, appetite, crave, craving, ravenous, peckish, feast, feed, sustenance, nourishment, nutrition, consume", "Keywords that trigger hunger.");
