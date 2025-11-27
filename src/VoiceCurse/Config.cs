@@ -73,69 +73,69 @@ public class Config {
 
     public Config(ConfigFile config) {
         // Global
-        EnableDebugLogs = config.Bind("Global", "EnableDebugLogs", true, "Enable debug logs for speech detection.");
-        GlobalCooldown = config.Bind("Global", "GlobalCooldown", 2.0f, "The time in seconds that must pass before another voice event can be triggered.");
+        EnableDebugLogs = config.Bind("Global", "EnableDebugLogs", true, "启用语音识别的调试日志。");
+        GlobalCooldown = config.Bind("Global", "GlobalCooldown", 2.0f, "在另一个语音事件可以被触发之前必须经过的时间（以秒为单位）。");
 
         // Event: Launch
-        LaunchEnabled = config.Bind("Event.Launch", "Enabled", true, "Enable the Launch event.");
-        LaunchKeywords = config.Bind("Event.Launch", "Keywords", "launch, fly, boost, ascend, lift, up, cannon, canon, rocket, soar, jump, spring, catapult, fling, hurl, propel, shoot, skyrocket, takeoff, left, right, forward, back, yeet, lob, pitch, chuck, heave, airborne, levitate, hover, elevate, rise, vault, leap, bound, hop, eject, thrust, projectile, missile, space, orbit", "List of keywords that trigger the launch event, separated by commas.");
-        LaunchForceLowerBound = config.Bind("Event.Launch", "ForceLowerBound", 1500f, "Lowest possible amount of force applied to the player upon launching..");
-        LaunchForceHigherBound = config.Bind("Event.Launch", "ForceHigherBound", 3000f, "Highest possible amount of force applied to the player upon launching..");
-        LaunchStunDuration = config.Bind("Event.Launch", "StunDuration", 3.0f, "Duration in seconds the player will be stunned/ragdolled after launching.");
+        LaunchEnabled = config.Bind("Event.Launch", "Enabled", true, "启用发射事件。");
+        LaunchKeywords = config.Bind("Event.Launch", "Keywords", "launch, fly, boost, ascend, lift, up, cannon, canon, rocket, soar, jump, spring, catapult, fling, hurl, propel, shoot, skyrocket, takeoff, left, right, forward, back, yeet, lob, pitch, chuck, heave, airborne, levitate, hover, elevate, rise, vault, leap, bound, hop, eject, thrust, projectile, missile, space, orbit, 发射, 飞行, 推进, 升空, 上升, 左, 右, 前, 后", "触发发射事件的关键字列表，用逗号分隔。");
+        LaunchForceLowerBound = config.Bind("Event.Launch", "ForceLowerBound", 1500f, "发射时施加给玩家的最低力值。");
+        LaunchForceHigherBound = config.Bind("Event.Launch", "ForceHigherBound", 3000f, "发射时施加给玩家的最高力值。");
+        LaunchStunDuration = config.Bind("Event.Launch", "StunDuration", 3.0f, "发射后玩家被眩晕/物理击倒的持续时间（以秒为单位）。");
 
         // Event: Affliction
-        AfflictionEnabled = config.Bind("Event.Affliction", "Enabled", true, "Enable the Affliction event.");
-        AfflictionMinPercent = config.Bind("Event.Affliction", "MinPercent", 0.2f, "The minimum percentage (0.0 to 1.0) of the status bar to fill when triggered.");
-        AfflictionMaxPercent = config.Bind("Event.Affliction", "MaxPercent", 0.6f, "The maximum percentage (0.0 to 1.0) of the status bar to fill when triggered.");
-        AfflictionTemperatureSwapEnabled = config.Bind("Event.Affliction", "TemperatureSwapEnabled", true, "If enabled, attempting to get rid of hot or cold by saying the opposite will just swap the existing effect to the new one and add on top of that to prevent cheesing it.");
-        
-        AfflictionKeywordsInjury = config.Bind("Event.Affliction", "KeywordsInjury", "damage, hurt, injury, injured, pain, harm, wound, hit, bleed, bruise, cut, slash, orange, ache, sore, trauma, gash, scrape, laceration, tear, torn, broken, fracture, sprain, puncture, stab, maim, cripple, batter", "Keywords that trigger physical injury.");
-        AfflictionKeywordsHunger = config.Bind("Event.Affliction", "KeywordsHunger", "hunger, hungry, starving, starve, food, malnourishment, famished, eat, snack, meal, yellow, appetite, crave, craving, ravenous, peckish, feast, feed, sustenance, nourishment, nutrition, consume", "Keywords that trigger hunger.");
-        AfflictionKeywordsCold = config.Bind("Event.Affliction", "KeywordsCold", "freezing, cold, blizzard, shiver, ice, frozen, chill, frigid, winter, blue, frost, arctic, polar, glacier, icicle, hypothermia, numb, shivering, freeze", "Keywords that trigger cold status.");
-        AfflictionKeywordsHot = config.Bind("Event.Affliction", "KeywordsHot", "hot, fire, melt, scorching, heat, burn, pyro, flame, summer, cook, hell, red, sizzle, sear, swelter, boil, roast, bake, baking, scald, inferno, blaze, blazing, ignite, combust, incinerate", "Keywords that trigger hot status.");
-        AfflictionKeywordsPoison = config.Bind("Event.Affliction", "KeywordsPoison", "poison, sick, vomit, toxic, venom, contaminate, purple, nausea, nauseous, intoxicate, pollute, taint, corrupt, disease, ill, ailment, malady", "Keywords that trigger poison status.");
-        AfflictionKeywordsSpores = config.Bind("Event.Affliction", "KeywordsSpores", "spore, pink", "Keywords that trigger spore status.");
+        AfflictionEnabled = config.Bind("Event.Affliction", "Enabled", true, "启用负面状态事件。");
+        AfflictionMinPercent = config.Bind("Event.Affliction", "MinPercent", 0.2f, "触发时状态条填充的最小百分比 (0.0 到 1.0)。");
+        AfflictionMaxPercent = config.Bind("Event.Affliction", "MaxPercent", 0.6f, "触发时状态条填充的最大百分比 (0.0 到 1.0)。");
+        AfflictionTemperatureSwapEnabled = config.Bind("Event.Affliction", "TemperatureSwapEnabled", true, "如果启用，尝试通过说出相反的词来摆脱热或冷状态，只会将现有效果切换到新的，并在顶部叠加，以防止滥用。");
+
+        AfflictionKeywordsInjury = config.Bind("Event.Affliction", "KeywordsInjury", "damage, hurt, injury, injured, pain, harm, wound, hit, bleed, bruise, cut, slash, orange, ache, sore, trauma, gash, scrape, laceration, tear, torn, broken, fracture, sprain, puncture, stab, maim, cripple, batter, 伤害, 受伤, 疼痛, 创伤, 橙色", "触发物理伤害的关键字。");
+        AfflictionKeywordsHunger = config.Bind("Event.Affliction", "KeywordsHunger", "hunger, hungry, starving, starve, food, malnourishment, famished, eat, snack, meal, yellow, appetite, crave, craving, ravenous, peckish, feast, feed, sustenance, nourishment, nutrition, consume, 饥饿, 饥渴, 饥肠辘辘, 食物, 黄色, 吃, 饮食, 营养", "触发饥饿状态的关键字。");
+        AfflictionKeywordsCold = config.Bind("Event.Affliction", "KeywordsCold", "freezing, cold, blizzard, shiver, ice, frozen, chill, frigid, winter, blue, frost, arctic, polar, glacier, icicle, hypothermia, numb, shivering, freeze, 寒冷, 冰, 冰冻, 冬天, 蓝色, 霜, 冰川, 冰柱, 低温, 冰结", "触发寒冷状态的关键字。");
+        AfflictionKeywordsHot = config.Bind("Event.Affliction", "KeywordsHot", "hot, fire, melt, scorching, heat, burn, pyro, flame, summer, cook, hell, red, sizzle, sear, swelter, boil, roast, bake, baking, scald, inferno, blaze, blazing, ignite, combust, incinerate, 热, 火, 熔化, 热量, 燃烧, 火焰, 夏天, 红色, 烤, 烧灼, 烈火", "触发炎热状态的关键字。");
+        AfflictionKeywordsPoison = config.Bind("Event.Affliction", "KeywordsPoison", "poison, sick, vomit, toxic, venom, contaminate, purple, nausea, nauseous, intoxicate, pollute, taint, corrupt, disease, ill, ailment, malady, 中毒, 生病, 毒素, 毒液, 污染, 紫色, 病, 疾病", "触发中毒状态的关键字。");
+        AfflictionKeywordsSpores = config.Bind("Event.Affliction", "KeywordsSpores", "spore, pink", "触发孢子状态的关键字。");
 
         // Event: Transmute
-        TransmuteEnabled = config.Bind("Event.Transmute", "Enabled", true, "Enable the Transmute event.");
-        
-        TransmuteMilkEnabled = config.Bind("Event.Transmute", "EnableMilk", true, "Enable 'milk/calcium' -> Fortified Milk");
-        TransmuteCactusEnabled = config.Bind("Event.Transmute", "EnableCactus", true, "Enable 'cactus' -> Cactus");
-        TransmuteCoconutEnabled = config.Bind("Event.Transmute", "EnableCoconut", true, "Enable 'coconut' -> Coconut");
-        TransmuteAppleEnabled = config.Bind("Event.Transmute", "EnableApple", true, "Enable 'apple/berry' -> Crispberries");
-        TransmuteBananaEnabled = config.Bind("Event.Transmute", "EnableBanana", true, "Enable 'banana' -> Peel");
-        TransmuteEggEnabled = config.Bind("Event.Transmute", "EnableEgg", true, "Enable 'egg' -> Egg");
-        TransmuteFruitEnabled = config.Bind("Event.Transmute", "EnableFruit", true, "Enable 'fruit' -> Random Fruit");
-        TransmuteMushroomEnabled = config.Bind("Event.Transmute", "EnableMushroom", true, "Enable 'mushroom/fungus' -> Mushroom");
-        
+        TransmuteEnabled = config.Bind("Event.Transmute", "Enabled", true, "启用转换事件。");
+
+        TransmuteMilkEnabled = config.Bind("Event.Transmute", "EnableMilk", true, "启用 'milk/calcium/奶/钙' -> 奶白金");
+        TransmuteCactusEnabled = config.Bind("Event.Transmute", "EnableCactus", true, "启用 'cactus/仙人掌' -> 仙人球");
+        TransmuteCoconutEnabled = config.Bind("Event.Transmute", "EnableCoconut", true, "启用 'coconut/椰子' -> 椰子");
+        TransmuteAppleEnabled = config.Bind("Event.Transmute", "EnableApple", true, "启用 'apple/berry/苹果/浆果' -> 脆莓");
+        TransmuteBananaEnabled = config.Bind("Event.Transmute", "EnableBanana", true, "启用 'banana/香蕉' -> 莓蕉皮");
+        TransmuteEggEnabled = config.Bind("Event.Transmute", "EnableEgg", true, "启用 'egg/鸡蛋' -> 煎蛋");
+        TransmuteFruitEnabled = config.Bind("Event.Transmute", "EnableFruit", true, "启用 'fruit/水果' -> 随机水果");
+        TransmuteMushroomEnabled = config.Bind("Event.Transmute", "EnableMushroom", true, "启用 'mushroom/fungus/蘑菇/真菌' -> 蘑菇");
+
         // Event: Death
-        DeathEnabled = config.Bind("Event.Death", "Enabled", true, "Enable the Death event.");
-        DeathKeywords = config.Bind("Event.Death", "Keywords", "die, death, dead, suicide, kill, deceased, skeleton, skull, bone, perish, demise, expire, fatal, mortal, slain, dying, corpse, cadaver, lifeless, cease, extinct, eliminate, terminate, execute, obliterate, annihilate, eradicate, end, finish, doom, grave, burial, coffin, casket, tomb, crypt, reaper, grim", "List of keywords that trigger the death event, separated by commas.");
+        DeathEnabled = config.Bind("Event.Death", "Enabled", true, "启用死亡事件。");
+        DeathKeywords = config.Bind("Event.Death", "Keywords", "die, death, dead, suicide, kill, deceased, skeleton, skull, bone, perish, demise, expire, fatal, mortal, slain, dying, corpse, cadaver, lifeless, cease, extinct, eliminate, terminate, execute, obliterate, annihilate, eradicate, end, finish, doom, grave, burial, coffin, casket, tomb, crypt, reaper, grim, 死, 死亡, 死去, 杀死, 骷髅, 尸体, 棺材, 墓穴", "触发死亡事件的关键字列表，用逗号分隔。");
 
         // Event: Zombify
-        ZombifyEnabled = config.Bind("Event.Zombify", "Enabled", true, "Enable the Zombify event.");
-        ZombifyKeywords = config.Bind("Event.Zombify", "Keywords", "zombie, zombify, zombified, walker, ghoul, bitten, bite, brain, rot, decay, infected, infection, plague, pandemic, virus, outbreak, cannibal, flesh, meat, undead, risen, horde, apocalypse, reanimate, lurker, creeper, crawler, groaning, groan, moan, growl, snarl", "List of keywords that trigger the zombify event, separated by commas.");
+        ZombifyEnabled = config.Bind("Event.Zombify", "Enabled", true, "启用僵尸化事件。");
+        ZombifyKeywords = config.Bind("Event.Zombify", "Keywords", "zombie, zombify, zombified, walker, ghoul, bitten, bite, brain, rot, decay, infected, infection, plague, pandemic, virus, outbreak, cannibal, flesh, meat, undead, risen, horde, apocalypse, reanimate, lurker, creeper, crawler, groaning, groan, moan, growl, snarl, 僵尸, 脑子, 腐烂, 感染, 病毒, 疫情, 行尸走肉", "触发僵尸化事件的关键字列表，用逗号分隔。");
 
         // Event: Sleep
-        SleepEnabled = config.Bind("Event.Sleep", "Enabled", true, "Enable the Sleep event.");
-        SleepKeywords = config.Bind("Event.Sleep", "Keywords", "faint, sleep, exhausted, sleepy, tired, bed, nap, rest, slumber, doze, snooze, pass out, knockout, blackout, coma, narc, drowsy, unconscious, collapse, zonk, conk, yawn, fatigue, fatigued, weary, lethargic, sluggish, drained, wiped, beat, worn, spent, shut-eye, shuteye, siesta, catnap, dreamland, nodding off, drift off, lights out, out cold", "List of keywords that trigger the sleep event, separated by commas.");
-        
+        SleepEnabled = config.Bind("Event.Sleep", "Enabled", true, "启用睡眠事件。");
+        SleepKeywords = config.Bind("Event.Sleep", "Keywords", "faint, sleep, exhausted, sleepy, tired, bed, nap, rest, slumber, doze, snooze, pass out, knockout, blackout, coma, narc, drowsy, unconscious, collapse, zonk, conk, yawn, fatigue, fatigued, weary, lethargic, sluggish, drained, wiped, beat, worn, spent, shut-eye, shuteye, siesta, catnap, dreamland, nodding off, drift off, lights out, out cold, 睡眠, 疲惫, 疲劳, 休息, 昏倒, 无意识, 打盹, 嗜睡", "触发睡眠事件的关键字列表，用逗号分隔。");
+
         // Event: Drop
-        DropEnabled = config.Bind("Event.Drop", "Enabled", true, "Enable the Drop event.");
-        DropKeywords = config.Bind("Event.Drop", "Keywords", "drop, oops, whoops, butterfingers, fumble, release, discard, off, loss, lose, let go, slip away, misplace, clumsy, accident, unhand, relinquish, surrender, abandon, ditch, shed, cast, toss, throw away, get rid", "List of keywords that trigger the drop event, separated by commas.");
+        DropEnabled = config.Bind("Event.Drop", "Enabled", true, "启用掉落事件。");
+        DropKeywords = config.Bind("Event.Drop", "Keywords", "drop, oops, whoops, butterfingers, fumble, release, discard, off, loss, lose, let go, slip away, misplace, clumsy, accident, unhand, relinquish, surrender, abandon, ditch, shed, cast, toss, throw away, get rid, 丢掉, 失手, 摔落, 松手, 丢失, 抛弃, 投掷, 丢下", "触发掉落事件的关键字列表，用逗号分隔。");
 
         // Event: Explode
-        ExplodeEnabled = config.Bind("Event.Explode", "Enabled", true, "Enable the Explode event.");
-        ExplodeKeywords = config.Bind("Event.Explode", "Keywords", "explosion, dynamite, grenade, explode, blow, blast, boom, nuke, bomb, nuclear, detonate, detonation, explosive, kaboom, burst", "List of keywords that trigger the explode event, separated by commas.");
-        ExplodeRadius = config.Bind("Event.Explode", "Radius", 6.0f, "The radius of the explosion effect and damage.");
-        ExplodeDamage = config.Bind("Event.Explode", "DamagePercent", 0.4f, "The percentage of injury (0.0 to 1.0) applied to the player.");
-        ExplodeStunDuration = config.Bind("Event.Explode", "StunDuration", 3.0f, "Duration in seconds the player will be stunned/ragdolled after explosion.");
-        ExplodeForceLowerBound = config.Bind("Event.Explode", "ForceLowerBound", 2000f, "Lowest possible amount of explosion force applied.");
-        ExplodeForceHigherBound = config.Bind("Event.Explode", "ForceHigherBound", 3000f, "Highest possible amount of explosion force applied.");
-        
+        ExplodeEnabled = config.Bind("Event.Explode", "Enabled", true, "启用爆炸事件。");
+        ExplodeKeywords = config.Bind("Event.Explode", "Keywords", "explosion, dynamite, grenade, explode, blow, blast, boom, nuke, bomb, nuclear, detonate, detonation, explosive, kaboom, burst, 爆炸, 炸药, 手榴弹, 爆破, 炸弹, 核弹, 引爆, 爆裂", "触发爆炸事件的关键字列表，用逗号分隔。");
+        ExplodeRadius = config.Bind("Event.Explode", "Radius", 6.0f, "爆炸效果和伤害的半径。");
+        ExplodeDamage = config.Bind("Event.Explode", "DamagePercent", 0.4f, "施加给玩家的伤害百分比 (0.0 到 1.0)。");
+        ExplodeStunDuration = config.Bind("Event.Explode", "StunDuration", 3.0f, "爆炸后玩家被眩晕/物理击倒的持续时间（以秒为单位）。");
+        ExplodeForceLowerBound = config.Bind("Event.Explode", "ForceLowerBound", 2000f, "施加的最低爆炸力值。");
+        ExplodeForceHigherBound = config.Bind("Event.Explode", "ForceHigherBound", 3000f, "施加的最高爆炸力值。");
+
         // Event: Slip
-        SlipEnabled = config.Bind("Event.Slip", "Enabled", true, "Enable the Slip event.");
-        SlipKeywords = config.Bind("Event.Slip", "Keywords", "fuck, asshole, bastard, bitch, fag, damn, crap, slip, slide, trip, fall, fell, stumble, tumble, topple, stagger, wobble, skid, slick, peel, unbalanced, unstable, tilt", "List of keywords that trigger the slip event, separated by commas.");
-        SlipStunDuration = config.Bind("Event.Slip", "StunDuration", 2.0f, "Duration in seconds the player will be stunned/ragdolled after slipping.");
+        SlipEnabled = config.Bind("Event.Slip", "Enabled", true, "启用滑倒事件。");
+        SlipKeywords = config.Bind("Event.Slip", "Keywords", "fuck, asshole, bastard, bitch, fag, damn, crap, slip, slide, trip, fall, fell, stumble, tumble, topple, stagger, wobble, skid, slick, peel, unbalanced, unstable, tilt, 滑倒, 滑行, 绊倒, 跌倒, 摔倒, 失衡, 不稳, 倾斜", "触发滑倒事件的关键字列表，用逗号分隔。");
+        SlipStunDuration = config.Bind("Event.Slip", "StunDuration", 2.0f, "滑倒后玩家被眩晕/物理击倒的持续时间（以秒为单位）。");
     }
 }

@@ -47,7 +47,7 @@ public class VoiceHandler : IDisposable {
         _eventHandler = new EventHandler(_config);
         _networker = new NetworkHandler();
         PhotonNetwork.AddCallbackTarget(_networker);
-        string modelPath = Path.Combine(pluginDir, "model-en-us");
+        string modelPath = Path.Combine(pluginDir, "model-zh-cn");
 
         if (Directory.Exists(modelPath)) {
             try {

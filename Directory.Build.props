@@ -19,7 +19,7 @@
         <GameInstallDir Condition="'$([MSBuild]::IsOSUnixLike())' != 'true' and $(GameInstallDir) == ''">$(MSBuildProgramFiles32)/Steam/steamapps/common/PEAK/</GameInstallDir>
         
         <PluginsDir Condition="'$([MSBuild]::IsOSUnixLike())' == 'true' and $(PluginsDir) == ''">$(HOME)/.local/share/com.kesomannen.gale/peak/profiles/Default/BepInEx/plugins/</PluginsDir>
-        <PluginsDir Condition="'$([MSBuild]::IsOSUnixLike())' != 'true' and $(PluginsDir) == ''">$(USERPROFILE)/AppData/Roaming/r2modmanPlus-local/PEAK/profiles/Default/BepInEx/plugins/</PluginsDir>
+        <PluginsDir Condition="'$([MSBuild]::IsOSUnixLike())' != 'true' and $(PluginsDir) == ''">$(MSBuildProgramFiles32)/Steam/steamapps/common/PEAK/BepInEx/plugins/</PluginsDir>
         
         <ManagedDir>$(GameInstallDir)PEAK_Data/Managed/</ManagedDir>
 

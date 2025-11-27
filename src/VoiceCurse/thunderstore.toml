@@ -5,10 +5,10 @@ schemaVersion = "0.0.1"
 repository = "https://thunderstore.io"
 
 [package]
-namespace = "Ryocery"
-name = "VoiceCurse"
-description = "Makes it so what people are saying can cause things to happen in game."
-websiteUrl = "https://github.com/Ryocery/voicecurse-peak"
+namespace = "jie65535"
+name = "VoiceCurse-Chinese"
+description = "VoiceCurse mod with Chinese localization support - Makes it so what people are saying can cause things to happen in game."
+websiteUrl = "https://github.com/jie65535/voicecurse-peak"
 containsNsfwContent = false
 
 [package.dependencies]

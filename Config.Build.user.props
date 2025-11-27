@@ -1,8 +1,10 @@
 <Project>
 
   <PropertyGroup>
-    <GameInstallDir>/mnt/storage/SteamLibrary/steamapps/common/PEAK/</GameInstallDir>
-    <PluginsDir>/home/youri/.local/share/com.kesomannen.gale/peak/profiles/Default/BepInEx/plugins/</PluginsDir>
+    <GameInstallDir Condition="'$([MSBuild]::IsOSUnixLike())' == 'true'">/mnt/storage/SteamLibrary/steamapps/common/PEAK/"</GameInstallDir>
+    <GameInstallDir Condition="'$([MSBuild]::IsOSUnixLike())' != 'true'">$(MSBuildProgramFiles32)/Steam/steamapps/common/PEAK/</GameInstallDir>
+    <PluginsDir Condition="'$([MSBuild]::IsOSUnixLike())' == 'true'">$(HOME)/.local/share/com.kesomannen.gale/peak/profiles/Default/BepInEx/plugins/</PluginsDir>
+    <PluginsDir Condition="'$([MSBuild]::IsOSUnixLike())' != 'true'">$(MSBuildProgramFiles32)/Steam/steamapps/common/PEAK/BepInEx/plugins/</PluginsDir>
   </PropertyGroup>
 
   <Target Name="DeployFiles" AfterTargets="Build" Condition="'$(Configuration)' == 'Debug'">

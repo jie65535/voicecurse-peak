@@ -96,7 +96,7 @@ public class NetworkHandler : IOnEventCallback {
             displayString = $"{prefix}<color=#8B0000>{match}</color>{suffix}";
         }
 
-        string finalMessage = $"<color={playerHex}>{playerName} said \"{displayString}\" which triggered </color><color=#FFA500>{eventName}</color><color=#FAFA33>{(string.IsNullOrEmpty(detail) ? "" : $" ({detail})")}</color>";
+        string finalMessage = $"<color={playerHex}>{playerName} 说了 \"{displayString}\" 触发了 </color><color=#FFA500>{eventName}</color><color=#FAFA33>{(string.IsNullOrEmpty(detail) ? "" : $" ({detail})")}</color>";
 
         try {
             _addMessageMethod.Invoke(_connectionLog, [finalMessage]);
