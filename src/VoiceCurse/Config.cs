@@ -78,7 +78,7 @@ public class Config {
 
         // Event: Launch
         LaunchEnabled = config.Bind("Event.Launch", "Enabled", true, "启用发射事件。");
-        LaunchKeywords = config.Bind("Event.Launch", "Keywords", "launch, fly, boost, ascend, lift, up, cannon, canon, rocket, soar, jump, spring, catapult, fling, hurl, propel, shoot, skyrocket, takeoff, left, right, forward, back, yeet, lob, pitch, chuck, heave, airborne, levitate, hover, elevate, rise, vault, leap, bound, hop, eject, thrust, projectile, missile, space, orbit, 发射, 飞行, 推进, 升空, 上升, 左, 右, 前, 后", "触发发射事件的关键字列表，用逗号分隔。");
+        LaunchKeywords = config.Bind("Event.Launch", "Keywords", "发射,飞,升空,火箭,弹射,推进,弹跳,喷射,弹起,左,右,前,后,上,下,冲天,蹦极,弹簧,投掷,抛射,加速,猛冲,升天,弹射器,导弹,太空,轨道", "触发发射事件的关键字列表，用逗号分隔。");
         LaunchForceLowerBound = config.Bind("Event.Launch", "ForceLowerBound", 1500f, "发射时施加给玩家的最低力值。");
         LaunchForceHigherBound = config.Bind("Event.Launch", "ForceHigherBound", 3000f, "发射时施加给玩家的最高力值。");
         LaunchStunDuration = config.Bind("Event.Launch", "StunDuration", 3.0f, "发射后玩家被眩晕/物理击倒的持续时间（以秒为单位）。");
@@ -89,12 +89,12 @@ public class Config {
         AfflictionMaxPercent = config.Bind("Event.Affliction", "MaxPercent", 0.6f, "触发时状态条填充的最大百分比 (0.0 到 1.0)。");
         AfflictionTemperatureSwapEnabled = config.Bind("Event.Affliction", "TemperatureSwapEnabled", true, "如果启用，尝试通过说出相反的词来摆脱热或冷状态，只会将现有效果切换到新的，并在顶部叠加，以防止滥用。");
 
-        AfflictionKeywordsInjury = config.Bind("Event.Affliction", "KeywordsInjury", "damage, hurt, injury, injured, pain, harm, wound, hit, bleed, bruise, cut, slash, orange, ache, sore, trauma, gash, scrape, laceration, tear, torn, broken, fracture, sprain, puncture, stab, maim, cripple, batter, 伤害, 受伤, 疼痛, 创伤, 橙色", "触发物理伤害的关键字。");
-        AfflictionKeywordsHunger = config.Bind("Event.Affliction", "KeywordsHunger", "hunger, hungry, starving, starve, food, malnourishment, famished, eat, snack, meal, yellow, appetite, crave, craving, ravenous, peckish, feast, feed, sustenance, nourishment, nutrition, consume, 饥饿, 饥渴, 饥肠辘辘, 食物, 黄色, 吃, 饮食, 营养", "触发饥饿状态的关键字。");
-        AfflictionKeywordsCold = config.Bind("Event.Affliction", "KeywordsCold", "freezing, cold, blizzard, shiver, ice, frozen, chill, frigid, winter, blue, frost, arctic, polar, glacier, icicle, hypothermia, numb, shivering, freeze, 寒冷, 冰, 冰冻, 冬天, 蓝色, 霜, 冰川, 冰柱, 低温, 冰结", "触发寒冷状态的关键字。");
-        AfflictionKeywordsHot = config.Bind("Event.Affliction", "KeywordsHot", "hot, fire, melt, scorching, heat, burn, pyro, flame, summer, cook, hell, red, sizzle, sear, swelter, boil, roast, bake, baking, scald, inferno, blaze, blazing, ignite, combust, incinerate, 热, 火, 熔化, 热量, 燃烧, 火焰, 夏天, 红色, 烤, 烧灼, 烈火", "触发炎热状态的关键字。");
-        AfflictionKeywordsPoison = config.Bind("Event.Affliction", "KeywordsPoison", "poison, sick, vomit, toxic, venom, contaminate, purple, nausea, nauseous, intoxicate, pollute, taint, corrupt, disease, ill, ailment, malady, 中毒, 生病, 毒素, 毒液, 污染, 紫色, 病, 疾病", "触发中毒状态的关键字。");
-        AfflictionKeywordsSpores = config.Bind("Event.Affliction", "KeywordsSpores", "spore, pink", "触发孢子状态的关键字。");
+        AfflictionKeywordsInjury = config.Bind("Event.Affliction", "KeywordsInjury", "受伤,伤害,疼痛,创伤,流血,骨折,扭伤,割伤,淤青,伤口,刺痛,酸痛,痛楚,内伤,外伤,重伤,轻伤,伤痛,痛感,橙色", "触发物理伤害的关键字。");
+        AfflictionKeywordsHunger = config.Bind("Event.Affliction", "KeywordsHunger", "饿,饥渴,吃饭,食物,进食,食欲,想吃,黄色,营养,进食,用餐,零食,大餐,喂食", "触发饥饿状态的关键字。");
+        AfflictionKeywordsCold = config.Bind("Event.Affliction", "KeywordsCold", "寒冷,冷,冰冻,冰凉,结冰,霜冻,发抖,哆嗦,打颤,寒颤,刺骨,降温,冰雪,冰川,冰柱,低温,冻僵,蓝色,北极,极地", "触发寒冷状态的关键字。");
+        AfflictionKeywordsHot = config.Bind("Event.Affliction", "KeywordsHot", "热,火烧,火烤,烫,火焰,夏天,红色,地狱,灼烧,沸腾,烘烤,炙烤,烈火,燃烧,点燃", "触发炎热状态的关键字。");
+        AfflictionKeywordsPoison = config.Bind("Event.Affliction", "KeywordsPoison", "中毒,毒药,毒素,毒液,恶心,想吐,呕吐,头晕,晕眩,不适,难受,污染,感染,疾病,生病,病症,病毒,紫色,病态,疾患", "触发中毒状态的关键字。");
+        AfflictionKeywordsSpores = config.Bind("Event.Affliction", "KeywordsSpores", "孢子,真菌,霉菌,蘑菇,菌类,粉红,粉色,发霉,霉变", "触发孢子状态的关键字。");
 
         // Event: Transmute
         TransmuteEnabled = config.Bind("Event.Transmute", "Enabled", true, "启用转换事件。");
@@ -109,24 +109,24 @@ public class Config {
         TransmuteMushroomEnabled = config.Bind("Event.Transmute", "EnableMushroom", true, "启用 'mushroom/fungus/蘑菇/真菌' -> 蘑菇");
 
         // Event: Death
-        DeathEnabled = config.Bind("Event.Death", "Enabled", true, "启用死亡事件。");
-        DeathKeywords = config.Bind("Event.Death", "Keywords", "die, death, dead, suicide, kill, deceased, skeleton, skull, bone, perish, demise, expire, fatal, mortal, slain, dying, corpse, cadaver, lifeless, cease, extinct, eliminate, terminate, execute, obliterate, annihilate, eradicate, end, finish, doom, grave, burial, coffin, casket, tomb, crypt, reaper, grim, 死, 死亡, 死去, 杀死, 骷髅, 尸体, 棺材, 墓穴", "触发死亡事件的关键字列表，用逗号分隔。");
+        DeathEnabled = config.Bind("Event.Death", "Enabled", false, "启用死亡事件。");
+        DeathKeywords = config.Bind("Event.Death", "Keywords", "死亡,去世,毙命,自杀,杀死,骷髅,骨头,尸体,棺材,坟墓,安息,永别,完蛋,嗝屁,牺牲,阵亡,挂了,断气,升天,投胎,终结,末日,死神,坟墓,墓穴,葬送,毁灭,消除,终结", "触发死亡事件的关键字列表，用逗号分隔。");
 
         // Event: Zombify
         ZombifyEnabled = config.Bind("Event.Zombify", "Enabled", true, "启用僵尸化事件。");
-        ZombifyKeywords = config.Bind("Event.Zombify", "Keywords", "zombie, zombify, zombified, walker, ghoul, bitten, bite, brain, rot, decay, infected, infection, plague, pandemic, virus, outbreak, cannibal, flesh, meat, undead, risen, horde, apocalypse, reanimate, lurker, creeper, crawler, groaning, groan, moan, growl, snarl, 僵尸, 脑子, 腐烂, 感染, 病毒, 疫情, 行尸走肉", "触发僵尸化事件的关键字列表，用逗号分隔。");
+        ZombifyKeywords = config.Bind("Event.Zombify", "Keywords", "僵尸,丧尸,感染,病毒,瘟疫,行尸,咬,脑子,腐烂,变异,不死,末日,生化,尸变,感染者,丧尸化,僵尸化,行尸走肉,活死人,亡灵,丧尸病毒,爆发,食人,血肉", "触发僵尸化事件的关键字列表，用逗号分隔。");
 
         // Event: Sleep
         SleepEnabled = config.Bind("Event.Sleep", "Enabled", true, "启用睡眠事件。");
-        SleepKeywords = config.Bind("Event.Sleep", "Keywords", "faint, sleep, exhausted, sleepy, tired, bed, nap, rest, slumber, doze, snooze, pass out, knockout, blackout, coma, narc, drowsy, unconscious, collapse, zonk, conk, yawn, fatigue, fatigued, weary, lethargic, sluggish, drained, wiped, beat, worn, spent, shut-eye, shuteye, siesta, catnap, dreamland, nodding off, drift off, lights out, out cold, 睡眠, 疲惫, 疲劳, 休息, 昏倒, 无意识, 打盹, 嗜睡", "触发睡眠事件的关键字列表，用逗号分隔。");
+        SleepKeywords = config.Bind("Event.Sleep", "Keywords", "睡觉,睡眠,疲惫,疲倦,打盹,小睡,休息,昏迷,昏倒,做梦,床,晚安,睡意,困倦,打瞌睡,昏睡,沉睡,熟睡,打哈欠,眼皮重,想睡,睡一觉,眯一会,躺平,打瞌睡,午睡,打盹儿", "触发睡眠事件的关键字列表，用逗号分隔。");
 
         // Event: Drop
         DropEnabled = config.Bind("Event.Drop", "Enabled", true, "启用掉落事件。");
-        DropKeywords = config.Bind("Event.Drop", "Keywords", "drop, oops, whoops, butterfingers, fumble, release, discard, off, loss, lose, let go, slip away, misplace, clumsy, accident, unhand, relinquish, surrender, abandon, ditch, shed, cast, toss, throw away, get rid, 丢掉, 失手, 摔落, 松手, 丢失, 抛弃, 投掷, 丢下", "触发掉落事件的关键字列表，用逗号分隔。");
+        DropKeywords = config.Bind("Event.Drop", "Keywords", "掉落,丢下,扔掉,失手,滑落,放手,放弃,丢失,手滑,没拿住,掉了,落下了,忘拿了,不见了,失踪,抛弃,丢弃,脱手,撒手,失物,遗失", "触发掉落事件的关键字列表，用逗号分隔。");
 
         // Event: Explode
         ExplodeEnabled = config.Bind("Event.Explode", "Enabled", true, "启用爆炸事件。");
-        ExplodeKeywords = config.Bind("Event.Explode", "Keywords", "explosion, dynamite, grenade, explode, blow, blast, boom, nuke, bomb, nuclear, detonate, detonation, explosive, kaboom, burst, 爆炸, 炸药, 手榴弹, 爆破, 炸弹, 核弹, 引爆, 爆裂", "触发爆炸事件的关键字列表，用逗号分隔。");
+        ExplodeKeywords = config.Bind("Event.Explode", "Keywords", "爆炸,引爆,炸弹,炸药,爆破,爆裂,核弹,手榴弹,地雷,自爆,炸裂,炸飞,boom,爆破,引爆,爆炸物,炸开,炸成灰,炸成碎片", "触发爆炸事件的关键字列表，用逗号分隔。");
         ExplodeRadius = config.Bind("Event.Explode", "Radius", 6.0f, "爆炸效果和伤害的半径。");
         ExplodeDamage = config.Bind("Event.Explode", "DamagePercent", 0.4f, "施加给玩家的伤害百分比 (0.0 到 1.0)。");
         ExplodeStunDuration = config.Bind("Event.Explode", "StunDuration", 3.0f, "爆炸后玩家被眩晕/物理击倒的持续时间（以秒为单位）。");
@@ -135,7 +135,7 @@ public class Config {
 
         // Event: Slip
         SlipEnabled = config.Bind("Event.Slip", "Enabled", true, "启用滑倒事件。");
-        SlipKeywords = config.Bind("Event.Slip", "Keywords", "fuck, asshole, bastard, bitch, fag, damn, crap, slip, slide, trip, fall, fell, stumble, tumble, topple, stagger, wobble, skid, slick, peel, unbalanced, unstable, tilt, 滑倒, 滑行, 绊倒, 跌倒, 摔倒, 失衡, 不稳, 倾斜", "触发滑倒事件的关键字列表，用逗号分隔。");
+        SlipKeywords = config.Bind("Event.Slip", "Keywords", "甲沟炎,滑倒,摔倒,绊倒,跌倒,摔跤,失足,溜滑,扑街,摔个狗吃屎,四脚朝天,人仰马翻,失衡,不稳,倾斜,打滑,滑行,绊脚,跌跤", "触发滑倒事件的关键字列表，用逗号分隔。");
         SlipStunDuration = config.Bind("Event.Slip", "StunDuration", 2.0f, "滑倒后玩家被眩晕/物理击倒的持续时间（以秒为单位）。");
     }
 }

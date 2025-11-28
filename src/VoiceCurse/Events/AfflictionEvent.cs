@@ -37,21 +37,32 @@ public class AfflictionEvent : VoiceEventBase {
         if (!Config.AfflictionEnabled.Value) return false;
         if (player.refs?.afflictions is null) return false;
         if (player.data.dead || player.data.fullyPassedOut) return false;
-        
-        if (!_wordToType.TryGetValue(matchedKeyword, out CharacterAfflictions.STATUSTYPE statusType)) return false;
-        ExecutionDetail = statusType.ToString();
 
-        if (Config.AfflictionTemperatureSwapEnabled.Value && 
+        if (!_wordToType.TryGetValue(matchedKeyword, out CharacterAfflictions.STATUSTYPE statusType)) return false;
+
+        // Set ExecutionDetail to Chinese equivalent
+        ExecutionDetail = statusType switch
+        {
+            CharacterAfflictions.STATUSTYPE.Injury => "受伤",
+            CharacterAfflictions.STATUSTYPE.Hunger => "饥饿",
+            CharacterAfflictions.STATUSTYPE.Cold => "寒冷",
+            CharacterAfflictions.STATUSTYPE.Hot => "灼烧",
+            CharacterAfflictions.STATUSTYPE.Poison => "中毒",
+            CharacterAfflictions.STATUSTYPE.Spores => "孢子",
+            _ => statusType.ToString()
+        };
+
+        if (Config.AfflictionTemperatureSwapEnabled.Value &&
            (statusType is CharacterAfflictions.STATUSTYPE.Hot or CharacterAfflictions.STATUSTYPE.Cold)) {
             HandleTemperatureExchange(player, statusType);
         }
 
         float amount = UnityEngine.Random.Range(Config.AfflictionMinPercent.Value, Config.AfflictionMaxPercent.Value);
-        
+
         if (Config.EnableDebugLogs.Value) {
             Debug.Log($"[VoiceCurse] Affliction Specifics: {statusType} ({amount:P0})");
         }
-        
+
         player.refs.afflictions.AddStatus(statusType, amount);
         return true;
     }
@@ -59,13 +70,13 @@ public class AfflictionEvent : VoiceEventBase {
     private void HandleTemperatureExchange(Character player, CharacterAfflictions.STATUSTYPE incomingType) {
         CharacterAfflictions.STATUSTYPE oppositeType = incomingType == CharacterAfflictions.STATUSTYPE.Hot ? CharacterAfflictions.STATUSTYPE.Cold : CharacterAfflictions.STATUSTYPE.Hot;
         float currentOppositeValue = player.refs.afflictions.GetCurrentStatus(oppositeType);
-        
+
         if (currentOppositeValue <= 0.01f) return;
-        
+
         if (Config.EnableDebugLogs.Value) {
             Debug.Log($"[VoiceCurse] Swapping {oppositeType} ({currentOppositeValue:P0}) to {incomingType}");
         }
-        
+
         player.refs.afflictions.SubtractStatus(oppositeType, currentOppositeValue);
         player.refs.afflictions.AddStatus(incomingType, currentOppositeValue);
     }

@@ -25,40 +25,40 @@ public class LaunchEvent(Config config) : VoiceEventBase(config) {
     protected override bool OnExecute(Character player, string spokenWord, string fullSentence, string matchedKeyword) {
         if (!Config.LaunchEnabled.Value) return false;
         if (player.data.dead || player.data.fullyPassedOut) return false;
-        
+
         if (_cachedLaunchSFX is null) FindLaunchSFX();
         player.Fall(Config.LaunchStunDuration.Value);
-        
+
         Vector3 forwardDir = player.data.lookDirection_Flat.normalized;
         Vector3 rightDir = Vector3.Cross(Vector3.up, forwardDir);
         Vector3 launchDirection;
         string directionName;
-        
-        if (fullSentence.Contains("left")) {
-            directionName = "Left";
+
+        if (fullSentence.Contains("left") || fullSentence.Contains("左")) {
+            directionName = "左";
             launchDirection = -rightDir + Vector3.up * 0.2f;
-        } 
-        else if (fullSentence.Contains("right")) {
-            directionName = "Right";
+        }
+        else if (fullSentence.Contains("right") || fullSentence.Contains("右")) {
+            directionName = "右";
             launchDirection = rightDir + Vector3.up * 0.2f;
         }
-        else if (fullSentence.Contains("backward") || fullSentence.Contains("backwards") || fullSentence.Contains("back")) {
-            directionName = "Back";
+        else if (fullSentence.Contains("backward") || fullSentence.Contains("backwards") || fullSentence.Contains("back") || fullSentence.Contains("后")) {
+            directionName = "后";
             launchDirection = -forwardDir + Vector3.up * 0.2f;
         }
-        else if (fullSentence.Contains("forward") || fullSentence.Contains("forwards")) {
-            directionName = "Forward";
+        else if (fullSentence.Contains("forward") || fullSentence.Contains("forwards") || fullSentence.Contains("前")) {
+            directionName = "前";
             launchDirection = forwardDir + Vector3.up * 0.2f;
         }
-        else if (fullSentence.Contains("up")) {
-            directionName = "Up";
+        else if (fullSentence.Contains("up") || fullSentence.Contains("上")) {
+            directionName = "上";
             launchDirection = Vector3.up;
         }
         else {
-            directionName = "Random";
+            directionName = "随机";
             launchDirection = GetRandomUpwardDirection();
         }
-        
+
         ExecutionDetail = directionName;
 
         launchDirection.Normalize();
@@ -68,7 +68,7 @@ public class LaunchEvent(Config config) : VoiceEventBase(config) {
 
         return true;
     }
-    
+
     private static Vector3 GetRandomUpwardDirection() {
         Vector3 direction = Random.onUnitSphere;
         direction.y = Mathf.Abs(direction.y);
