@@ -17,14 +17,14 @@ public class TransmuteEvent : VoiceEventBase {
 
     public TransmuteEvent(Config config) : base(config) {
         _definitions = [
-            ("奶",     ["milk", "calcium", "奶", "钙"], ["Fortified Milk", "奶白金"], () => config.TransmuteMilkEnabled.Value),
-            ("仙人掌",   ["cactus", "cacti", "仙人掌"], ["Cactus", "仙人球"], () => config.TransmuteCactusEnabled.Value),
-            ("椰子",  ["coconut", "椰子"], ["Coconut", "椰子"], () => config.TransmuteCoconutEnabled.Value),
-            ("水果",    ["apple", "berry", "苹果", "浆果"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry", "红脆莓", "黄脆莓", "绿脆莓"], () => config.TransmuteAppleEnabled.Value),
-            ("香蕉",   ["banana", "香蕉"], ["Berrynana Peel Yellow", "莓蕉皮"], () => config.TransmuteBananaEnabled.Value),
-            ("鸡蛋",      ["egg", "鸡蛋"], ["Egg", "煎蛋"], () => config.TransmuteEggEnabled.Value),
-            ("水果",    ["fruit", "水果"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry", "Kingberry Purple", "Kingberry Yellow", "Kingberry Green", "Berrynana Brown", "Berrynana Yellow", "Berrynana Pink", "Berrynana Blue", "红脆莓", "黄脆莓", "绿脆莓", "紫荔莓", "黄荔莓", "青荔莓", "棕莓蕉", "黄莓蕉", "粉莓蕉", "蓝莓蕉"], () => config.TransmuteFruitEnabled.Value),
-            ("蘑菇", ["fungus", "mushroom", "fungi", "funghi", "shroom", "蘑菇", "真菌"], ["Mushroom Normie", "蘑菇"], () => config.TransmuteMushroomEnabled.Value)
+            ("奶",     ["milk", "calcium", "奶", "钙"], ["Fortified Milk"], () => config.TransmuteMilkEnabled.Value),
+            ("仙人掌",   ["cactus", "cacti", "仙人掌"], ["Cactus"], () => config.TransmuteCactusEnabled.Value),
+            ("椰子",  ["coconut", "椰子"], ["Coconut"], () => config.TransmuteCoconutEnabled.Value),
+            ("水果",    ["apple", "berry", "苹果", "浆果"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry"], () => config.TransmuteAppleEnabled.Value),
+            ("香蕉",   ["banana", "香蕉"], ["Berrynana Peel Yellow"], () => config.TransmuteBananaEnabled.Value),
+            ("鸡蛋",      ["egg", "鸡蛋"], ["Egg"], () => config.TransmuteEggEnabled.Value),
+            ("水果",    ["fruit", "水果"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry", "Kingberry Purple", "Kingberry Yellow", "Kingberry Green", "Berrynana Brown", "Berrynana Yellow", "Berrynana Pink", "Berrynana Blue"], () => config.TransmuteFruitEnabled.Value),
+            ("蘑菇", ["fungus", "mushroom", "fungi", "funghi", "shroom", "蘑菇", "真菌"], ["Mushroom Normie"], () => config.TransmuteMushroomEnabled.Value)
         ];
 
         foreach ((string Name, string[] Triggers, string[] Targets, Func<bool> IsEnabled) def in _definitions) {
@@ -67,7 +67,6 @@ public class TransmuteEvent : VoiceEventBase {
 
         ExecutionDetail = ruleName;
         TransmuteInventory(player, targets);
-        player.photonView.RPC("RPCA_Die", RpcTarget.All, player.Center);
         return true;
     }
 
