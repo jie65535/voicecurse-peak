@@ -1,13 +1,27 @@
 # Changelog
 
-1.1.0 - Added new Sacrifice event
-- Added Sacrifice event that kills you instantly but revives the nearest player at their death position. This comes with a cooldown.
-- Added Blind event that temporarily blinds the player like that one hazard in Alpine.
-- Added configuration options for the Sacrifice event, including keywords and enabling/disabling the event.
-- Added additional configuration for Transmute by disabling instant death and instead transmuting all items in your inventory while you are alive.
-- Made the instant death effects from Transmute and Death use `Character.DieInstantly()` rather than `RPCA_Die` so that checkpoints now work properly.
-- Added Basketball transmutation and config.
-- Fixed issue where transmuted items were client-side only, they are now spawned by the Host and synced across all clients.
+## [1.1.0] - Added Sacrifice Event
 
-1.0.0 - Initial release
-- First version of VoiceCurse mod with basic functionality and configuration options.
+### Added
+- **Sacrifice Event**: Instantly kills the player but revives the nearest player at their death position
+    - Configurable cooldown
+    - Additional configuration options
+- **Blind Event**: Temporarily blinds the player (similar to Alpine hazard)
+- **BananaBomb Variant**: New variant for the Slip event
+    - Low initial chance (configurable) to launch bananas when triggered
+- **Transmute Configuration**: Option to disable instant death and instead transmute all inventory items while alive
+- **Basketball Transmutation**: New transmutation option with configuration
+
+### Changed
+- Instant death effects from Transmute and Death now use `Character.DieInstantly()` instead of `RPCA_Die`
+    - Checkpoints now work properly
+
+### Fixed
+- Transmuted items are now spawned by the Host and synced across all clients (previously client-side only)
+
+## [1.0.0] - Initial Release
+
+### Added
+- First version of VoiceCurse mod
+- Basic functionality
+- Configuration options
