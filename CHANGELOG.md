@@ -7,7 +7,7 @@
     - Configurable cooldown
     - Additional configuration options
 - **Blind Event**: Temporarily blinds the player (similar to Alpine hazard)
-- **BananaBomb Variant**: New variant for the Slip event
+- **BananaBomb Slip**: New addition for the Slip event
     - Low initial chance (configurable) to launch bananas when triggered
 - **Transmute Configuration**: Option to disable instant death and instead transmute all inventory items while alive
 - **Basketball Transmutation**: New transmutation option with configuration
