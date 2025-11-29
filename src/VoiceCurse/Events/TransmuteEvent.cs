@@ -66,7 +66,6 @@ public class TransmuteEvent : VoiceEventBase {
         if (targets == null || targets.Length == 0) return false;
         
         ExecutionDetail = ruleName;
-
         bool deathEnabled = Config.TransmuteDeathEnabled.Value;
         
         if (deathEnabled) {

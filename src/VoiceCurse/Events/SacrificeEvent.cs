@@ -8,6 +8,7 @@ namespace VoiceCurse.Events;
 
 public class SacrificeEvent(Config config) : VoiceEventBase(config) {
     private readonly HashSet<string> _sacrificeKeywords = ParseKeywords(config.SacrificeKeywords.Value);
+    private float _lastSacrificeTime = -999f;
 
     protected override IEnumerable<string> GetKeywords() {
         return Config.SacrificeEnabled.Value ? _sacrificeKeywords : Enumerable.Empty<string>();
@@ -17,14 +18,20 @@ public class SacrificeEvent(Config config) : VoiceEventBase(config) {
         if (!Config.SacrificeEnabled.Value) return false;
         if (player.data.dead) return false;
         
+        if (Time.time < _lastSacrificeTime + Config.SacrificeCooldown.Value) {
+            Debug.Log("[VoiceCurse] Cooldown active, cannot sacrifice now.");
+            return false;
+        }
+
         Character? closestDeadPlayer = DeathTracker.GetClosestDeadPlayer(player.Center, out Vector3 deathPos);
         if (!closestDeadPlayer) return false; 
+        _lastSacrificeTime = Time.time;
         
         Vector3 revivePosition = deathPos + Vector3.up * 1.0f;
+        
         ExecutionDetail = $"Reviving {closestDeadPlayer.characterName}";
         closestDeadPlayer.view.RPC("RPCA_ReviveAtPosition", RpcTarget.All, revivePosition, true);
         DeathTracker.RemoveDeath(closestDeadPlayer);
-        
         player.DieInstantly();
         return true;
     }
