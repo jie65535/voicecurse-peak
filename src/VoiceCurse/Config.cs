@@ -119,7 +119,7 @@ public class Config {
         TransmuteEggEnabled = config.Bind("Event.Transmute", "EnableEgg", true, "Enable 'egg' -> Egg");
         TransmuteFruitEnabled = config.Bind("Event.Transmute", "EnableFruit", true, "Enable 'fruit' -> Random Fruit");
         TransmuteMushroomEnabled = config.Bind("Event.Transmute", "EnableMushroom", true, "Enable 'mushroom/fungus' -> Mushroom");
-        TransmuteBallEnabled = config.Bind("Event.Transmute", "EnableBall", false, "Enable 'ball' -> Basketball");
+        TransmuteBallEnabled = config.Bind("Event.Transmute", "EnableBall", true, "Enable 'ball' -> Basketball");
         
         // Event: Death
         DeathEnabled = config.Bind("Event.Death", "Enabled", true, "Enable the Death event.");

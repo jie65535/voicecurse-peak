@@ -69,8 +69,8 @@ public class LaunchEvent(Config config) : VoiceEventBase(config) {
     }
 
     public override void PlayEffects(Vector3 position) {
-        if (_cachedLaunchSFX is null) FindLaunchSFX();
-        if (_cachedLaunchSFX is null) return;
+        if (!_cachedLaunchSFX) FindLaunchSFX();
+        if (!_cachedLaunchSFX) return;
         GameObject sfx = Object.Instantiate(_cachedLaunchSFX, position, Quaternion.identity);
         sfx.SetActive(true);
         Object.Destroy(sfx, 5f);

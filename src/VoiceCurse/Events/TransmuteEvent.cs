@@ -13,6 +13,7 @@ public class TransmutePayload {
     public string? ruleName;
     public bool isDeath;
     public int spawnCount;
+    public Vector3 deathPosition; 
 }
 
 public class TransmuteEvent : VoiceEventBase {
@@ -78,7 +79,8 @@ public class TransmuteEvent : VoiceEventBase {
         TransmutePayload payload = new() {
             ruleName = ruleName,
             isDeath = deathEnabled,
-            spawnCount = 0
+            spawnCount = 0,
+            deathPosition = player.Center
         };
 
         if (deathEnabled) {
@@ -114,7 +116,9 @@ public class TransmuteEvent : VoiceEventBase {
         string[] targets = definition.Targets;
 
         if (payload.isDeath) {
-            SpawnTransmutedItems(origin.Center, payload.spawnCount, targets);
+            // Use the captured position if available, otherwise fallback to center (which might be the void)
+            Vector3 spawnPos = payload.deathPosition != Vector3.zero ? payload.deathPosition : origin.Center;
+            SpawnTransmutedItems(spawnPos, payload.spawnCount, targets);
         } else {
             TransmuteInventoryAlive(origin, targets);
             float damage = Random.Range(Config.AfflictionMinPercent.Value, Config.AfflictionMaxPercent.Value);
