@@ -116,7 +116,6 @@ public class TransmuteEvent : VoiceEventBase {
         string[] targets = definition.Targets;
 
         if (payload.isDeath) {
-            // Use the captured position if available, otherwise fallback to center (which might be the void)
             Vector3 spawnPos = payload.deathPosition != Vector3.zero ? payload.deathPosition : origin.Center;
             SpawnTransmutedItems(spawnPos, payload.spawnCount, targets);
         } else {

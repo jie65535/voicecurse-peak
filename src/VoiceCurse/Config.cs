@@ -72,6 +72,11 @@ public class Config {
     public ConfigEntry<string> SlipKeywords { get; private set; }
     public ConfigEntry<float> SlipStunDuration { get; private set; }
     
+    
+    public ConfigEntry<bool> BananaBombEnabled { get; private set; }
+    public ConfigEntry<float> BananaBombChance { get; private set; }
+    public ConfigEntry<int> BananaBombAmount { get; private set; }
+    
     // Event: Sacrifice
     public ConfigEntry<bool> SacrificeEnabled { get; private set; }
     public ConfigEntry<string> SacrificeKeywords { get; private set; }
@@ -150,6 +155,10 @@ public class Config {
         SlipEnabled = config.Bind("Event.Slip", "Enabled", true, "Enable the Slip event.");
         SlipKeywords = config.Bind("Event.Slip", "Keywords", "fuck, asshole, bastard, bitch, fag, damn, crap, slip, slide, trip, fall, fell, stumble, tumble, topple, stagger, wobble, skid, slick, peel, unbalanced, unstable, tilt", "List of keywords that trigger the slip event, separated by commas.");
         SlipStunDuration = config.Bind("Event.Slip", "StunDuration", 2.0f, "Duration in seconds the player will be stunned/ragdolled after slipping.");
+        
+        BananaBombEnabled = config.Bind("Event.Slip", "BananaBombEnabled", true, "Enable the rare Banana Bomb easter egg on slip.");
+        BananaBombChance = config.Bind("Event.Slip", "BananaBombChance", 0.05f, "Chance (0.0 - 1.0) for a slip to trigger a Banana Bomb.");
+        BananaBombAmount = config.Bind("Event.Slip", "BananaBombAmount", 30, "Amount of bananas to spawn during a Banana Bomb.");
         
         // Event: Sacrifice
         SacrificeEnabled = config.Bind("Event.Sacrifice", "Enabled", true, "Enable the Sacrifice event.");
