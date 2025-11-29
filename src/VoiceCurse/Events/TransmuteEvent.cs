@@ -74,8 +74,6 @@ public class TransmuteEvent : VoiceEventBase {
             player.DieInstantly();
         } else {
             TransmuteInventoryAlive(player, targets);
-
-            if (!player.refs.afflictions) return true;
             float damage = Random.Range(Config.AfflictionMinPercent.Value, Config.AfflictionMaxPercent.Value);
             player.refs.afflictions.AddStatus(CharacterAfflictions.STATUSTYPE.Injury, damage);
         }
