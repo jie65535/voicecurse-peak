@@ -27,7 +27,7 @@ public class BlindEvent(Config config) : VoiceEventBase(config) {
             _blindRoutine = player.StartCoroutine(BlindnessRoutine(player));
         }
         
-        player.AddIllegalStatus("BLIND", duration); 
+        player.AddIllegalStatus("BLIND", duration);
         return true;
     }
 

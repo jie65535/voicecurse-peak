@@ -19,6 +19,7 @@ The keywords themselves can all be configured to your own preference, although t
 | Transmute  | "milk", "fruit", "apple", "banana"          | Causes you and your inventory items to transform into related objects, this kills you instantly.  |
 | Zombify    | "rot", "zombie", "ghoul", "bite"            | Turns you into a zombie.                                                                          |
 | Sacrifice  | "trade", "sacrifice", "revive", "resurrect" | Kills you instantly but fully revives the nearest player at their death position. Has a cooldown. |
+| Blind      | "blind", "flash", "eyes", "can't see"        | Temporarily blinds you like you were hit by that one hazard in Alpine.                            |
 
 > ### Note
 > Note that the events are triggered when it detects the keyword *anywhere* in the spoken sentence.

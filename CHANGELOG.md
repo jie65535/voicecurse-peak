@@ -1,7 +1,8 @@
 # Changelog
 
 1.1.0 - Added new Sacrifice event
-- Added the Sacrifice event that kills you instantly but revives the nearest player at their death position. This comes with a cooldown.
+- Added Sacrifice event that kills you instantly but revives the nearest player at their death position. This comes with a cooldown.
+- Added Blind event that temporarily blinds the player like that one hazard in Alpine.
 - Added configuration options for the Sacrifice event, including keywords and enabling/disabling the event.
 - Added additional configuration for Transmute by disabling instant death and instead transmuting all items in your inventory while you are alive.
 - Made the instant death effects from Transmute and Death use `Character.DieInstantly()` rather than `RPCA_Die` so that checkpoints now work properly.

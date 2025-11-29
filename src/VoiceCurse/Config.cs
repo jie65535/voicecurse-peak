@@ -158,7 +158,7 @@ public class Config {
         
         // Event: Blind
         BlindEnabled = config.Bind("Event.Blind", "Enabled", true, "Enable the Blind event.");
-        BlindKeywords = config.Bind("Event.Blind", "Keywords", "blind, flash, eyes, vision, cant see, darkness, my eyes", "List of keywords that trigger the blind event.");
+        BlindKeywords = config.Bind("Event.Blind", "Keywords", "blind, flash, eyes, vision, can't see, my eyes", "List of keywords that trigger the blind event.");
         BlindDuration = config.Bind("Event.Blind", "Duration", 15.0f, "Duration in seconds the player will be blinded.");
     }
 }
