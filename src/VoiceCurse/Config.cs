@@ -83,7 +83,7 @@ public class Config {
 
         // Event: Launch
         LaunchEnabled = config.Bind("Event.Launch", "Enabled", true, "Enable the Launch event.");
-        LaunchKeywords = config.Bind("Event.Launch", "Keywords", "launch, fly, boost, ascend, lift, up, cannon, canon, rocket, soar, jump, spring, catapult, fling, hurl, propel, shoot, skyrocket, takeoff, left, right, forward, back, yeet, lob, pitch, chuck, heave, airborne, levitate, hover, elevate, rise, vault, leap, bound, hop, eject, thrust, projectile, missile, space, orbit", "List of keywords that trigger the launch event, separated by commas.");
+        LaunchKeywords = config.Bind("Event.Launch", "Keywords", "launch, fly, boost, ascend, lift, up, cannon, canon, rocket, soar, jump, spring, catapult, fling, hurl, propel, shoot, skyrocket, takeoff, left, right, forward, back, yeet, lob, pitch, chuck, heave, airborne, levitate, hover, elevate, rise, vault, leap, hop, eject, thrust, projectile, missile, space, orbit", "List of keywords that trigger the launch event, separated by commas.");
         LaunchForceLowerBound = config.Bind("Event.Launch", "ForceLowerBound", 1500f, "Lowest possible amount of force applied to the player upon launching..");
         LaunchForceHigherBound = config.Bind("Event.Launch", "ForceHigherBound", 3000f, "Highest possible amount of force applied to the player upon launching..");
         LaunchStunDuration = config.Bind("Event.Launch", "StunDuration", 3.0f, "Duration in seconds the player will be stunned/ragdolled after launching.");

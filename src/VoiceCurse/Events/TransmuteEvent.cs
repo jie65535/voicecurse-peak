@@ -182,6 +182,7 @@ public class TransmuteEvent : VoiceEventBase {
         if (picker.refs != null && picker.refs.items != null) {
             picker.refs.items.lastEquippedSlotTime = 0f;
         }
+        
         item.Interact(picker);
     }
     
