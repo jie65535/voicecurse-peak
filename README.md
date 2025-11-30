@@ -54,4 +54,15 @@
 3.  将内容提取到游戏的 `BepInEx/plugins` 文件夹中。
 4.  运行一次游戏以生成配置文件。
 
+## 语音模型配置（可选但推荐）
+
+本插件默认使用Vosk进行语音识别，自带的模型是 vosk-model-small-cn-0.22。这个模型的好处是体积较小只有42MB，但识别准确率可能不够好。
+
+如果想获得最佳体验，推荐下载完整模型 vosk-model-cn-0.22：
+1. 从以下地址下载完整模型：[https://alphacephei.com/vosk/models](https://alphacephei.com/vosk/models#:~:text=Apache%202.0-,vosk%2Dmodel%2Dcn%2D0.22,-1.3G) (查找 vosk-model-cn-0.22，大小为1.3G)
+2. 将下载的模型解压到插件目录下
+3. 将解压后的文件夹重命名为 `model-zh-cn`
+
+配置完成后，您将获得更准确的中文语音识别体验。
+
 ## 每个人都需要安装模组才能正常工作！
