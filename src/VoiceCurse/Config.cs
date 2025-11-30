@@ -19,7 +19,7 @@ public class Config {
     public ConfigEntry<float> AfflictionMinPercent { get; private set; }
     public ConfigEntry<float> AfflictionMaxPercent { get; private set; }
     public ConfigEntry<bool> AfflictionTemperatureSwapEnabled { get; private set; }
-    
+
     // Affliction Keywords
     public ConfigEntry<string> AfflictionKeywordsInjury { get; private set; }
     public ConfigEntry<string> AfflictionKeywordsHunger { get; private set; }
@@ -30,8 +30,8 @@ public class Config {
 
     // Event: Transmute
     public ConfigEntry<bool> TransmuteEnabled { get; private set; }
-    
-    // Individual Transmute Toggles
+    public ConfigEntry<bool> TransmuteDeathEnabled { get; private set; }
+
     public ConfigEntry<bool> TransmuteMilkEnabled { get; private set; }
     public ConfigEntry<bool> TransmuteCactusEnabled { get; private set; }
     public ConfigEntry<bool> TransmuteCoconutEnabled { get; private set; }
@@ -40,7 +40,8 @@ public class Config {
     public ConfigEntry<bool> TransmuteEggEnabled { get; private set; }
     public ConfigEntry<bool> TransmuteFruitEnabled { get; private set; }
     public ConfigEntry<bool> TransmuteMushroomEnabled { get; private set; }
-    
+    public ConfigEntry<bool> TransmuteBallEnabled { get; private set; }
+
     // Event: Death
     public ConfigEntry<bool> DeathEnabled { get; private set; }
     public ConfigEntry<string> DeathKeywords { get; private set; }
@@ -52,7 +53,7 @@ public class Config {
     // Event: Sleep
     public ConfigEntry<bool> SleepEnabled { get; private set; }
     public ConfigEntry<string> SleepKeywords { get; private set; }
-    
+
     // Event: Drop
     public ConfigEntry<bool> DropEnabled { get; private set; }
     public ConfigEntry<string> DropKeywords { get; private set; }
@@ -65,11 +66,26 @@ public class Config {
     public ConfigEntry<float> ExplodeStunDuration { get; private set; }
     public ConfigEntry<float> ExplodeForceLowerBound { get; private set; }
     public ConfigEntry<float> ExplodeForceHigherBound { get; private set; }
-    
+
     // Event: Slip
     public ConfigEntry<bool> SlipEnabled { get; private set; }
     public ConfigEntry<string> SlipKeywords { get; private set; }
     public ConfigEntry<float> SlipStunDuration { get; private set; }
+
+
+    public ConfigEntry<bool> BananaBombEnabled { get; private set; }
+    public ConfigEntry<float> BananaBombChance { get; private set; }
+    public ConfigEntry<int> BananaBombAmount { get; private set; }
+
+    // Event: Sacrifice
+    public ConfigEntry<bool> SacrificeEnabled { get; private set; }
+    public ConfigEntry<string> SacrificeKeywords { get; private set; }
+    public ConfigEntry<float> SacrificeCooldown { get; private set; }
+
+    // Event: Blind
+    public ConfigEntry<bool> BlindEnabled { get; private set; }
+    public ConfigEntry<string> BlindKeywords { get; private set; }
+    public ConfigEntry<float> BlindDuration { get; private set; }
 
     public Config(ConfigFile config) {
         // Global
@@ -98,6 +114,7 @@ public class Config {
 
         // Event: Transmute
         TransmuteEnabled = config.Bind("Event.Transmute", "Enabled", true, "启用转换事件。");
+        TransmuteDeathEnabled = config.Bind("Event.Transmute", "EnableDeath", true, "启用转换触发时的即时死亡（使用你的身体作为转换材料）。如果禁用，你只会受到伤害（你的身体部分转换）。");
 
         TransmuteMilkEnabled = config.Bind("Event.Transmute", "EnableMilk", true, "启用 'milk/calcium/奶/钙' -> 奶白金");
         TransmuteCactusEnabled = config.Bind("Event.Transmute", "EnableCactus", true, "启用 'cactus/仙人掌' -> 仙人球");
@@ -107,6 +124,7 @@ public class Config {
         TransmuteEggEnabled = config.Bind("Event.Transmute", "EnableEgg", true, "启用 'egg/鸡蛋' -> 煎蛋");
         TransmuteFruitEnabled = config.Bind("Event.Transmute", "EnableFruit", true, "启用 'fruit/水果' -> 随机水果");
         TransmuteMushroomEnabled = config.Bind("Event.Transmute", "EnableMushroom", true, "启用 'mushroom/fungus/蘑菇/真菌' -> 蘑菇");
+        TransmuteBallEnabled = config.Bind("Event.Transmute", "EnableBall", true, "启用 'ball/球' -> 篮球");
 
         // Event: Death
         DeathEnabled = config.Bind("Event.Death", "Enabled", false, "启用死亡事件。");
@@ -137,5 +155,19 @@ public class Config {
         SlipEnabled = config.Bind("Event.Slip", "Enabled", true, "启用滑倒事件。");
         SlipKeywords = config.Bind("Event.Slip", "Keywords", "甲沟炎,滑倒,摔倒,绊倒,跌倒,摔跤,失足,溜滑,扑街,摔个狗吃屎,四脚朝天,人仰马翻,失衡,不稳,倾斜,打滑,滑行,绊脚,跌跤", "触发滑倒事件的关键字列表，用逗号分隔。");
         SlipStunDuration = config.Bind("Event.Slip", "StunDuration", 2.0f, "滑倒后玩家被眩晕/物理击倒的持续时间（以秒为单位）。");
+
+        BananaBombEnabled = config.Bind("Event.Slip", "BananaBombEnabled", true, "启用罕见的香蕉炸弹彩蛋。");
+        BananaBombChance = config.Bind("Event.Slip", "BananaBombChance", 0.05f, "滑倒时触发香蕉炸弹的几率 (0.0 - 1.0)。");
+        BananaBombAmount = config.Bind("Event.Slip", "BananaBombAmount", 30, "香蕉炸弹生成的香蕉数量。");
+
+        // Event: Sacrifice
+        SacrificeEnabled = config.Bind("Event.Sacrifice", "Enabled", true, "启用献祭事件。");
+        SacrificeKeywords = config.Bind("Event.Sacrifice", "Keywords", "献祭,交易,复活,重生,牺牲,救赎", "触发献祭事件的关键字列表，用逗号分隔。");
+        SacrificeCooldown = config.Bind("Event.Sacrifice", "Cooldown", 300f, "献祭事件的冷却时间（秒）。");
+
+        // Event: Blind
+        BlindEnabled = config.Bind("Event.Blind", "Enabled", true, "启用致盲事件。");
+        BlindKeywords = config.Bind("Event.Blind", "Keywords", "致盲,闪光,眼睛,视力,看不见,失明,眼花", "触发致盲事件的关键字列表，用逗号分隔。");
+        BlindDuration = config.Bind("Event.Blind", "Duration", 15.0f, "玩家致盲的持续时间（秒）。");
     }
 }

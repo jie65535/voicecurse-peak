@@ -15,23 +15,25 @@ VoiceCurse mod 现在支持中文本地化！玩家可以使用中文语音指�
 
 The keywords themselves can all be configured to your own preference, although there is a lot of them. First, let's go over all possible events.
 
-| Events     | English Keyword Examples            | 中文关键词示例                    | Effect                                                                                          |
-|------------|-------------------------------------|----------------------------------|-------------------------------------------------------------------------------------------------|
-| Affliction | "hot", "cold", "ill", "sick"        | "热", "火", "寒冷", "冷", "病", "毒" | Gives you the affliction of the related keyword.                                                |
-| Death      | "die", "end", "bones", "skeleton"   | "死", "死亡", "尸体", "骷髅", "骨头"  | Kills you instantly.                                                                            |
-| Drop       | "oops", "release", "off", "lose"    | "丢", "掉", "失手", "松手", "丢失"    | Drops all your items, including the items in your backpack.                                     |
-| Explode    | "blow", "explode", "blast", "nuke"  | "爆炸", "爆破", "炸药", "炸弹"       | Makes you explode instantly, this causes damage to your surroundings too.                       |
-| Launch     | "up", "left", "right", "cannon"     | "发射", "飞行", "上升", "左", "右", "前", "后" | Launches you in a specified direction if provided, otherwise randomly.                          |
-| Sleep      | "rest", "tired", "exhausted", "nap" | "睡", "休息", "疲劳", "昏倒"        | Makes you pass out instantly.                                                                   |
-| Slip       | "crap", "damn",  "trip", "fall"     | "滑倒", "绊倒", "跌倒", "不稳"      | Causes you to trip like stepping on a banana.                                                   |
-| Transmute  | "milk", "fruit", "apple", "banana"  | "奶", "钙", "水果", "苹果", "香蕉", "蘑菇" | Causes you and your inventory items to transform into related objects, this kills you instantly |
-| Zombify    | "rot", "zombie", "ghoul", "bite"    | "僵尸", "腐烂", "感染", "病毒"      | Turns you into a zombie.                                                                        |
+| Events     | Keyword Examples                            | 中文关键词示例                                | Effect                                                                                          |
+|------------|---------------------------------------------|----------------------------------------------|-------------------------------------------------------------------------------------------------|
+| Affliction | "hot", "cold", "ill", "sick"                | "热", "火", "寒冷", "冷", "病", "毒", "发烧", "难受" | Gives you the affliction of the related keyword.                                                  |
+| Death      | "die", "end", "bones", "skeleton"           | "死", "死亡", "尸体", "骷髅", "骨头", "安息", "归西" | Kills you instantly.                                                                              |
+| Drop       | "oops", "release", "off", "lose"            | "丢", "掉", "失手", "松手", "丢失", "放手", "掉落" | Drops all your items, including the items in your backpack.                                       |
+| Explode    | "blow", "explode", "blast", "nuke"          | "爆炸", "爆破", "炸药", "炸弹", "引爆", "爆裂" | Makes you explode instantly, this causes damage to your surroundings too.                         |
+| Launch     | "up", "left", "right", "cannon"             | "发射", "飞行", "上升", "左", "右", "前", "后", "上天", "弹射", "飞" | Launches you in a specified direction if provided, otherwise randomly.                            |
+| Sleep      | "rest", "tired", "exhausted", "nap"         | "睡", "休息", "疲劳", "昏倒", "打盹", "困" | Makes you pass out instantly.                                                                     |
+| Slip       | "crap", "damn",  "trip", "fall"             | "滑倒", "绊倒", "跌倒", "不稳", "摔倒", "甲沟炎" | Causes you to trip like stepping on a banana.                                                     |
+| Transmute  | "milk", "fruit", "apple", "banana"          | "奶", "钙", "水果", "苹果", "香蕉", "蘑菇", "转化", "变化" | Causes you and your inventory items to transform into related objects, this kills you instantly.  |
+| Zombify    | "rot", "zombie", "ghoul", "bite"            | "僵尸", "腐烂", "感染", "病毒", "丧尸", "咬" | Turns you into a zombie.                                                                          |
+| Sacrifice  | "trade", "sacrifice", "revive", "resurrect" | "献祭", "交易", "复活", "重生", "牺牲", "救赎" | 立即杀死你，但会在死亡位置完全复活最近的玩家。有冷却时间。 |
+| Blind      | "blind", "flash", "eyes", "can't see"        | "致盲", "闪光", "眼睛", "看不见", "失明", "眼花" | 像在Alpine中被某个危险击中一样暂时使你失明。                            |
 
 > ### Note
 > Note that the events are triggered when it detects the keyword *anywhere* in the spoken sentence.
 > This means that saying words like "gro**up**" will trigger the "up" launch event because "up" is contained within "group".
 > This applies to every keyword and is not functionality that can be disabled.
-> 
+>
 > This means that saying safe words like "n**ice**" can trigger the cold affliction event because "ice" is a keyword. There are many such examples and this is the central challenge of using this mod.
 
 ## Configuration

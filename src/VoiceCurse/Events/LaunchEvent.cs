@@ -10,14 +10,6 @@ public class LaunchEvent(Config config) : VoiceEventBase(config) {
     private readonly HashSet<string> _keywords = ParseKeywords(config.LaunchKeywords.Value);
     private static GameObject? _cachedLaunchSFX;
 
-    private static HashSet<string> ParseKeywords(string configLine) {
-        return configLine
-            .Split([','], System.StringSplitOptions.RemoveEmptyEntries)
-            .Select(k => k.Trim().ToLowerInvariant())
-            .Where(k => !string.IsNullOrWhiteSpace(k))
-            .ToHashSet();
-    }
-
     protected override IEnumerable<string> GetKeywords() {
         return Config.LaunchEnabled.Value ? _keywords : Enumerable.Empty<string>();
     }
@@ -77,8 +69,8 @@ public class LaunchEvent(Config config) : VoiceEventBase(config) {
     }
 
     public override void PlayEffects(Vector3 position) {
-        if (_cachedLaunchSFX is null) FindLaunchSFX();
-        if (_cachedLaunchSFX is null) return;
+        if (!_cachedLaunchSFX) FindLaunchSFX();
+        if (!_cachedLaunchSFX) return;
         GameObject sfx = Object.Instantiate(_cachedLaunchSFX, position, Quaternion.identity);
         sfx.SetActive(true);
         Object.Destroy(sfx, 5f);

@@ -1,10 +1,31 @@
-# Changelog
+# 更新日志
 
-1.0.1 - Chinese Localization
-- Added full Chinese localization support
-- Added Chinese keywords alongside English keywords for all voice events
-- Updated configuration descriptions to Chinese
-- Updated README with Chinese documentation
+## [1.1.0] - 新增献祭事件和中文本地化
 
-1.0.0 - Initial release
-- First version of VoiceCurse mod with basic functionality and configuration options.
+### 新增
+- **献祭事件**: 立即杀死玩家但会在死亡位置复活最近的玩家
+    - 可配置冷却时间
+    - 额外的配置选项
+- **致盲事件**: 临时致盲玩家（类似于Alpine中的危害）
+- **香蕉炸弹滑倒**: 滑倒事件的新功能
+    - 触发时有一定几率（可配置）发射香蕉
+- **转换配置**: 选项禁用即时死亡，改为在存活状态下转换所有库存物品
+- **篮球转换**: 新的转换选项及配置
+- **中文本地化**: 全面的中文本地化支持
+    - 为所有语音事件添加了中英双语关键词
+    - 配置描述已翻译为中文
+    - README已更新为中英双语文档
+
+### 更改
+- 转换和死亡的即时死亡效果现在使用 `Character.DieInstantly()` 而不是 `RPCA_Die`
+    - 检查点现在可以正常使用
+
+### 修复
+- 转换的物品现在由主机生成并在所有客户端同步（之前仅客户端本地化）
+
+## [1.0.0] - 初始版本
+
+### 新增
+- VoiceCurse 模组的初始版本
+- 基本功能
+- 配置选项

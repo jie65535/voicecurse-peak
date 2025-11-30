@@ -13,14 +13,15 @@ public class NetworkHandler : IOnEventCallback {
     private static MonoBehaviour? _connectionLog;
     private static MethodInfo? _addMessageMethod;
 
-    public static void SendCurseEvent(string spokenWord, string matchedKeyword, string eventName, string? detail, Vector3 position) {
+    public static void SendCurseEvent(string spokenWord, string matchedKeyword, string eventName, string? detail, string? payload, Vector3 position) {
         object[] content = [
             PhotonNetwork.LocalPlayer.ActorNumber,
             spokenWord,
             matchedKeyword,
             eventName,
             detail ?? string.Empty,
-            position
+            position,
+            payload ?? string.Empty
         ];
 
         RaiseEventOptions raiseEventOptions = new() { Receivers = ReceiverGroup.All };
@@ -37,8 +38,10 @@ public class NetworkHandler : IOnEventCallback {
         string spokenWord = (string)data[1];
         string matchedKeyword = (string)data[2];
         string eventName = (string)data[3];
-        string detail = (string)data[4];
+        string displayDetail = (string)data[4];
         Vector3 position = (Vector3)data[5];
+        
+        string payload = data.Length > 6 ? (string)data[6] : string.Empty;
 
         string charName = "Unknown";
         Color playerColor = Color.white;
@@ -54,13 +57,14 @@ public class NetworkHandler : IOnEventCallback {
                 playerColor = character.refs.customization.PlayerColor;
             }
         }
-
-        DisplayNotification(charName, playerColor, spokenWord, matchedKeyword, eventName, detail);
+        
+        DisplayNotification(charName, playerColor, spokenWord, matchedKeyword, eventName, displayDetail);
 
         if (!EventHandler.Events.TryGetValue(eventName, out IVoiceEvent evt)) return;
         
         if (character) {
-            evt.PlayEffects(character, position);
+            string dataToPass = !string.IsNullOrEmpty(payload) ? payload : displayDetail;
+            evt.PlayEffects(character, position, dataToPass);
         } else {
             evt.PlayEffects(position);
         }
