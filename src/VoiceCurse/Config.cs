@@ -114,9 +114,9 @@ public class Config {
 
         // Event: Transmute
         TransmuteEnabled = config.Bind("Event.Transmute", "Enabled", true, "启用转换事件。");
-        TransmuteDeathEnabled = config.Bind("Event.Transmute", "EnableDeath", true, "启用转换触发时的即时死亡（使用你的身体作为转换材料）。如果禁用，你只会受到伤害（你的身体部分转换）。");
+        TransmuteDeathEnabled = config.Bind("Event.Transmute", "EnableDeath", false, "启用转换触发时的即时死亡（使用你的身体作为转换材料）。如果禁用，你只会受到伤害（你的身体部分转换）。");
 
-        TransmuteMilkEnabled = config.Bind("Event.Transmute", "EnableMilk", false, "启用 'milk/calcium/奶/钙' -> 奶白金");
+        TransmuteMilkEnabled = config.Bind("Event.Transmute", "EnableMilk", true, "启用 'milk/calcium/奶/钙' -> 奶白金");
         TransmuteCactusEnabled = config.Bind("Event.Transmute", "EnableCactus", true, "启用 'cactus/仙人掌' -> 仙人球");
         TransmuteCoconutEnabled = config.Bind("Event.Transmute", "EnableCoconut", true, "启用 'coconut/椰子' -> 椰子");
         TransmuteAppleEnabled = config.Bind("Event.Transmute", "EnableApple", true, "启用 'apple/berry/苹果/浆果' -> 脆莓");
