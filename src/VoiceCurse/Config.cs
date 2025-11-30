@@ -110,13 +110,13 @@ public class Config {
         AfflictionKeywordsCold = config.Bind("Event.Affliction", "KeywordsCold", "寒冷,冷,冰冻,冰凉,结冰,霜冻,发抖,哆嗦,打颤,寒颤,刺骨,降温,冰雪,冰川,冰柱,低温,冻僵,蓝色,北极,极地", "触发寒冷状态的关键字。");
         AfflictionKeywordsHot = config.Bind("Event.Affliction", "KeywordsHot", "热,火烧,火烤,烫,火焰,夏天,红色,地狱,灼烧,沸腾,烘烤,炙烤,烈火,燃烧,点燃", "触发炎热状态的关键字。");
         AfflictionKeywordsPoison = config.Bind("Event.Affliction", "KeywordsPoison", "中毒,毒药,毒素,毒液,恶心,想吐,呕吐,头晕,晕眩,不适,难受,污染,感染,疾病,生病,病症,病毒,紫色,病态,疾患", "触发中毒状态的关键字。");
-        AfflictionKeywordsSpores = config.Bind("Event.Affliction", "KeywordsSpores", "孢子,真菌,霉菌,蘑菇,菌类,粉红,粉色,发霉,霉变", "触发孢子状态的关键字。");
+        AfflictionKeywordsSpores = config.Bind("Event.Affliction", "KeywordsSpores", "孢子,真菌,霉菌,菌类,粉红,粉色,发霉,霉变", "触发孢子状态的关键字。");
 
         // Event: Transmute
         TransmuteEnabled = config.Bind("Event.Transmute", "Enabled", true, "启用转换事件。");
         TransmuteDeathEnabled = config.Bind("Event.Transmute", "EnableDeath", true, "启用转换触发时的即时死亡（使用你的身体作为转换材料）。如果禁用，你只会受到伤害（你的身体部分转换）。");
 
-        TransmuteMilkEnabled = config.Bind("Event.Transmute", "EnableMilk", true, "启用 'milk/calcium/奶/钙' -> 奶白金");
+        TransmuteMilkEnabled = config.Bind("Event.Transmute", "EnableMilk", false, "启用 'milk/calcium/奶/钙' -> 奶白金");
         TransmuteCactusEnabled = config.Bind("Event.Transmute", "EnableCactus", true, "启用 'cactus/仙人掌' -> 仙人球");
         TransmuteCoconutEnabled = config.Bind("Event.Transmute", "EnableCoconut", true, "启用 'coconut/椰子' -> 椰子");
         TransmuteAppleEnabled = config.Bind("Event.Transmute", "EnableApple", true, "启用 'apple/berry/苹果/浆果' -> 脆莓");
@@ -162,12 +162,12 @@ public class Config {
 
         // Event: Sacrifice
         SacrificeEnabled = config.Bind("Event.Sacrifice", "Enabled", true, "启用献祭事件。");
-        SacrificeKeywords = config.Bind("Event.Sacrifice", "Keywords", "献祭,交易,复活,重生,牺牲,救赎", "触发献祭事件的关键字列表，用逗号分隔。");
+        SacrificeKeywords = config.Bind("Event.Sacrifice", "Keywords", "献祭,交易,复活,重生,牺牲,救赎,召唤,归来,复苏,穿越,请神", "触发献祭事件的关键字列表，用逗号分隔。");
         SacrificeCooldown = config.Bind("Event.Sacrifice", "Cooldown", 300f, "献祭事件的冷却时间（秒）。");
 
         // Event: Blind
         BlindEnabled = config.Bind("Event.Blind", "Enabled", true, "启用致盲事件。");
-        BlindKeywords = config.Bind("Event.Blind", "Keywords", "致盲,闪光,眼睛,视力,看不见,失明,眼花", "触发致盲事件的关键字列表，用逗号分隔。");
+        BlindKeywords = config.Bind("Event.Blind", "Keywords", "致盲,闪光,眼睛,眼瞎,视力,看不见,失明,眼花", "触发致盲事件的关键字列表，用逗号分隔。");
         BlindDuration = config.Bind("Event.Blind", "Duration", 15.0f, "玩家致盲的持续时间（秒）。");
     }
 }

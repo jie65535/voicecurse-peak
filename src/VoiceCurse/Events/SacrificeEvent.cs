@@ -29,7 +29,7 @@ public class SacrificeEvent(Config config) : VoiceEventBase(config) {
         
         Vector3 revivePosition = deathPos + Vector3.up * 1.0f;
         
-        ExecutionDetail = $"Reviving {closestDeadPlayer.characterName}";
+        ExecutionDetail = $"复活 {closestDeadPlayer.characterName}";
         closestDeadPlayer.view.RPC("RPCA_ReviveAtPosition", RpcTarget.All, revivePosition, true);
         DeathTracker.RemoveDeath(closestDeadPlayer);
         

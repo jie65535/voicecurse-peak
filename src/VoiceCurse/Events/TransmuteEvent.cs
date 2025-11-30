@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using UnityEngine;
 using Photon.Pun;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace VoiceCurse.Events;
@@ -25,15 +25,15 @@ public class TransmuteEvent : VoiceEventBase {
 
     public TransmuteEvent(Config config) : base(config) {
         _definitions = [
-            ("Milk",     ["milk", "calcium", "奶", "钙"], ["Fortified Milk"], () => config.TransmuteMilkEnabled.Value),
-            ("Cactus",   ["cactus", "cacti", "仙人掌"], ["Cactus"], () => config.TransmuteCactusEnabled.Value),
-            ("Coconut",  ["coconut", "椰子"], ["Coconut"], () => config.TransmuteCoconutEnabled.Value),
-            ("Apple/Berry",    ["apple", "berry", "berries", "苹果", "浆果"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry"], () => config.TransmuteAppleEnabled.Value),
-            ("Banana",   ["banana", "香蕉"], ["Berrynana Peel Yellow"], () => config.TransmuteBananaEnabled.Value),
-            ("Egg",      ["egg", "鸡蛋"], ["Egg"], () => config.TransmuteEggEnabled.Value),
-            ("Fruit",    ["fruit", "水果"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry", "Kingberry Purple", "Kingberry Yellow", "Kingberry Green", "Berrynana Brown", "Berrynana Yellow", "Berrynana Pink", "Berrynana Blue"], () => config.TransmuteFruitEnabled.Value),
-            ("Mushroom", ["fungus", "mushroom", "fungi", "funghi", "shroom", "蘑菇", "真菌"], ["Mushroom Normie"], () => config.TransmuteMushroomEnabled.Value),
-            ("Ball",     ["ball", "球"], ["Basketball"], () => config.TransmuteBallEnabled.Value)
+            ("奶",     ["milk", "calcium", "奶", "钙"], ["Fortified Milk"], () => config.TransmuteMilkEnabled.Value),
+            ("仙人掌",   ["cactus", "cacti", "仙人掌"], ["Cactus"], () => config.TransmuteCactusEnabled.Value),
+            ("椰子",  ["coconut", "椰子"], ["Coconut"], () => config.TransmuteCoconutEnabled.Value),
+            ("苹果/浆果",    ["apple", "berry", "berries", "苹果", "浆果"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry"], () => config.TransmuteAppleEnabled.Value),
+            ("香蕉",   ["banana", "香蕉"], ["Berrynana Peel Yellow"], () => config.TransmuteBananaEnabled.Value),
+            ("鸡蛋",      ["egg", "鸡蛋"], ["Egg"], () => config.TransmuteEggEnabled.Value),
+            ("水果",    ["fruit", "水果"], ["Red Crispberry", "Yellow Crispberry", "Green Crispberry", "Kingberry Purple", "Kingberry Yellow", "Kingberry Green", "Berrynana Brown", "Berrynana Yellow", "Berrynana Pink", "Berrynana Blue"], () => config.TransmuteFruitEnabled.Value),
+            ("蘑菇", ["fungus", "mushroom", "fungi", "funghi", "shroom", "蘑菇", "真菌"], ["Mushroom Normie"], () => config.TransmuteMushroomEnabled.Value),
+            ("球",     ["ball", "球"], ["Basketball"], () => config.TransmuteBallEnabled.Value)
         ];
 
         foreach ((string Name, string[] Triggers, string[] Targets, Func<bool> IsEnabled) def in _definitions) {

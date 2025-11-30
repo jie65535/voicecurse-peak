@@ -6,7 +6,7 @@ repository = "https://thunderstore.io"
 
 [package]
 namespace = "jie65535"
-name = "VoiceCurse-Chinese"
+name = "VoiceCurseZh"
 description = "VoiceCurse mod with Chinese localization support - Makes it so what people are saying can cause things to happen in game."
 websiteUrl = "https://github.com/jie65535/voicecurse-peak"
 containsNsfwContent = false
@@ -15,12 +15,12 @@ containsNsfwContent = false
 BepInEx-BepInExPack_PEAK = "5.4.2403"
 
 [build]
-icon = "../../icon.png"
+icon = "../../icon.jpg"
 readme = "../../README.md"
 outdir = "../../artifacts/thunderstore/"
 
 [[build.copy]]
-source = "../../artifacts/bin/VoiceCurse/release/com.github.Ryocery.VoiceCurse.dll"
+source = "../../artifacts/bin/VoiceCurse/release/com.github.jie65535.VoiceCurse.dll"
 target = "plugins/"
 
 [[build.copy]]

@@ -42,7 +42,7 @@ public class LaunchEvent(Config config) : VoiceEventBase(config) {
             directionName = "前";
             launchDirection = forwardDir + Vector3.up * 0.2f;
         }
-        else if (fullSentence.Contains("up") || fullSentence.Contains("上")) {
+        else if (fullSentence.Contains("up") || fullSentence.Contains("上") || fullSentence.Contains("飞")) {
             directionName = "上";
             launchDirection = Vector3.up;
         }
