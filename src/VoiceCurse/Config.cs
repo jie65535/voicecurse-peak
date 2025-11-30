@@ -144,7 +144,7 @@ public class Config {
 
         // Event: Explode
         ExplodeEnabled = config.Bind("Event.Explode", "Enabled", true, "启用爆炸事件。");
-        ExplodeKeywords = config.Bind("Event.Explode", "Keywords", "爆炸,引爆,炸弹,炸药,爆破,爆裂,核弹,手榴弹,地雷,自爆,炸裂,炸飞,boom,爆破,引爆,爆炸物,炸开,炸成灰,炸成碎片", "触发爆炸事件的关键字列表，用逗号分隔。");
+        ExplodeKeywords = config.Bind("Event.Explode", "Keywords", "爆炸,引爆,炸弹,炸药,爆破,爆裂,核弹,手榴弹,地雷,自爆,炸裂,boom,爆破,引爆,爆炸物,炸开,炸成灰,炸成碎片", "触发爆炸事件的关键字列表，用逗号分隔。");
         ExplodeRadius = config.Bind("Event.Explode", "Radius", 6.0f, "爆炸效果和伤害的半径。");
         ExplodeDamage = config.Bind("Event.Explode", "DamagePercent", 0.4f, "施加给玩家的伤害百分比 (0.0 到 1.0)。");
         ExplodeStunDuration = config.Bind("Event.Explode", "StunDuration", 3.0f, "爆炸后玩家被眩晕/物理击倒的持续时间（以秒为单位）。");
@@ -167,7 +167,7 @@ public class Config {
 
         // Event: Blind
         BlindEnabled = config.Bind("Event.Blind", "Enabled", true, "启用致盲事件。");
-        BlindKeywords = config.Bind("Event.Blind", "Keywords", "致盲,闪光,眼睛,眼瞎,视力,看不见,失明,眼花", "触发致盲事件的关键字列表，用逗号分隔。");
+        BlindKeywords = config.Bind("Event.Blind", "Keywords", "致盲,闪光,眼睛,眼瞎,视力,看不见,失明,眼花,瞎了", "触发致盲事件的关键字列表，用逗号分隔。");
         BlindDuration = config.Bind("Event.Blind", "Duration", 15.0f, "玩家致盲的持续时间（秒）。");
     }
 }

@@ -156,26 +156,28 @@ public class TransmuteEvent : VoiceEventBase {
     private void TransmuteInventoryAlive(Character player, string[] possibleTargets) {
         Vector3 voidPosition = new(0, -5000, 0);
         Vector3 spawnOrigin = player.Center;
+        int totalItemsToSpawn = 0;
 
         for (byte i = 0; i < 3; i++) {
             ItemSlot slot = player.player.GetItemSlot(i);
             if (slot == null || slot.IsEmpty()) continue;
 
             player.refs.items.photonView.RPC("DropItemFromSlotRPC", RpcTarget.All, i, voidPosition);
-            SpawnAndPickupItem(player, possibleTargets, spawnOrigin);
+            totalItemsToSpawn++;
         }
 
         ItemSlot backpackSlot = player.player.GetItemSlot(3);
         if (backpackSlot != null && !backpackSlot.IsEmpty()) {
-            int countToSpawn = 1;
+            totalItemsToSpawn++;
 
             if (backpackSlot.data.TryGetDataEntry(DataEntryKey.BackpackData, out BackpackData backpackData)) {
-                countToSpawn += backpackData.FilledSlotCount();
+                totalItemsToSpawn += backpackData.FilledSlotCount();
             }
 
             player.refs.items.photonView.RPC("DropItemFromSlotRPC", RpcTarget.All, (byte)3, voidPosition);
-            SpawnTransmutedItems(spawnOrigin, countToSpawn, possibleTargets);
         }
+
+        SpawnTransmutedItems(spawnOrigin, totalItemsToSpawn, possibleTargets);
 
         if (player.refs.afflictions) player.refs.afflictions.UpdateWeight();
     }
