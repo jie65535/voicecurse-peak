@@ -1,67 +1,57 @@
-# VoiceCurse
+# VoiceCurseZh（中文版语音诅咒模组）
 
-Mod that triggers gameplay events based on what players are saying.
-It uses an offline voice recognition library to detect you saying specific words or phrases, which then activate various in-game effects.
+基于原版VoiceCurse模组的中文本地化版本，该模组会根据玩家说话内容触发游戏事件。
+它使用离线语音识别库来检测您说出的特定单词或短语，然后激活各种游戏内效果。
 
-## 中文本地化 / Chinese Localization
+## 原作者及原项目
 
-本模组现已支持中文本地化！玩家可以使用中文语音命令触发游戏事件。
+- **原作者**: Ryocery
+- **原项目地址**: [https://github.com/Ryocery/voicecurse-peak](https://github.com/Ryocery/voicecurse-peak)
+- **中文本地化**: 本模组由社区成员进行中文本地化，感谢原作者的贡献
 
-VoiceCurse mod 现在支持中文本地化！玩家可以使用中文语音指令来触发游戏事件。您可以说中文单词或短语来激活各种游戏效果。
+## 特性
 
-中文关键词已添加到默认配置中，与英文关键词并存以确保兼容性。
+所有的关键词都可以根据您的喜好进行配置，虽然关键词很多。首先，让我们看看所有可能的事件。
 
-## Features
+| 事件类型 | 中文关键词示例 | 效果 |
+| ---- | ------------------------------------------|--------------------------------------------|
+| 病痛 | "热", "火", "寒冷", "冷", "病", "毒"等 | 给予您与关键词相关的病痛症状。 |
+| 死亡 | "死", "死亡", "尸体", "骷髅", "骨头"等 | 立即杀死您。 |
+| 丢弃 | "丢", "掉", "失手", "松手", "丢失"等 | 丢弃您所有的物品，包括背包中的物品。 |
+| 爆炸 | "爆炸", "爆破", "炸药", "炸弹", "引爆"等 | 立即使您爆炸，这也会对您周围的环境造成伤害。 |
+| 发射 | "发射", "飞行", "上升", "左", "右", "前", "后"等 | 将您向指定方向发射（如果指定），否则随机方向。 |
+| 睡眠 | "睡", "休息", "疲劳", "昏倒", "打盹", "困"等 | 立即让您昏睡过去。 |
+| 滑倒 | "滑倒", "绊倒", "跌倒", "不稳", "摔倒", "甲沟炎"等 | 让您像踩到香蕉皮一样滑倒。 |
+| 变化 | "奶", "钙", "水果", "苹果", "香蕉", "蘑菇"等 | 使您和您的物品转化为相关物品，这会立即杀死您。 |
+| 僵尸 | "僵尸", "腐烂", "感染", "病毒", "丧尸", "咬"等 | 将您变为僵尸。 |
+| 献祭 | "献祭", "交易", "复活", "重生", "牺牲", "救赎"等 | 立即杀死您，但会在死亡位置完全复活最近的玩家。有冷却时间。 |
+| 致盲 | "致盲", "闪光", "眼睛", "看不见", "失明", "眼花"等 | 像在雪山中被某个危险击中一样暂时使您失明。 |
 
-The keywords themselves can all be configured to your own preference, although there is a lot of them. First, let's go over all possible events.
-
-| Events     | Keyword Examples                            | 中文关键词示例                                | Effect                                                                                          |
-|------------|---------------------------------------------|----------------------------------------------|-------------------------------------------------------------------------------------------------|
-| Affliction | "hot", "cold", "ill", "sick"                | "热", "火", "寒冷", "冷", "病", "毒", "发烧", "难受" | Gives you the affliction of the related keyword.                                                  |
-| Death      | "die", "end", "bones", "skeleton"           | "死", "死亡", "尸体", "骷髅", "骨头", "安息", "归西" | Kills you instantly.                                                                              |
-| Drop       | "oops", "release", "off", "lose"            | "丢", "掉", "失手", "松手", "丢失", "放手", "掉落" | Drops all your items, including the items in your backpack.                                       |
-| Explode    | "blow", "explode", "blast", "nuke"          | "爆炸", "爆破", "炸药", "炸弹", "引爆", "爆裂" | Makes you explode instantly, this causes damage to your surroundings too.                         |
-| Launch     | "up", "left", "right", "cannon"             | "发射", "飞行", "上升", "左", "右", "前", "后", "上天", "弹射", "飞" | Launches you in a specified direction if provided, otherwise randomly.                            |
-| Sleep      | "rest", "tired", "exhausted", "nap"         | "睡", "休息", "疲劳", "昏倒", "打盹", "困" | Makes you pass out instantly.                                                                     |
-| Slip       | "crap", "damn",  "trip", "fall"             | "滑倒", "绊倒", "跌倒", "不稳", "摔倒", "甲沟炎" | Causes you to trip like stepping on a banana.                                                     |
-| Transmute  | "milk", "fruit", "apple", "banana"          | "奶", "钙", "水果", "苹果", "香蕉", "蘑菇", "转化", "变化" | Causes you and your inventory items to transform into related objects, this kills you instantly.  |
-| Zombify    | "rot", "zombie", "ghoul", "bite"            | "僵尸", "腐烂", "感染", "病毒", "丧尸", "咬" | Turns you into a zombie.                                                                          |
-| Sacrifice  | "trade", "sacrifice", "revive", "resurrect" | "献祭", "交易", "复活", "重生", "牺牲", "救赎" | 立即杀死你，但会在死亡位置完全复活最近的玩家。有冷却时间。 |
-| Blind      | "blind", "flash", "eyes", "can't see"        | "致盲", "闪光", "眼睛", "看不见", "失明", "眼花" | 像在Alpine中被某个危险击中一样暂时使你失明。                            |
-
-> ### Note
-> Note that the events are triggered when it detects the keyword *anywhere* in the spoken sentence.
-> This means that saying words like "gro**up**" will trigger the "up" launch event because "up" is contained within "group".
-> This applies to every keyword and is not functionality that can be disabled.
+> ### 注意
+> 请注意，当检测到关键词出现在所说句子中的*任何位置*时，都会触发事件。
+> 这意味着说像"等一下"这样的词会触发"下"发射事件，因为"等一下"中包含了"下"这个词。
+> 这适用于每个关键词，且是无法禁用的功能。
 >
-> This means that saying safe words like "n**ice**" can trigger the cold affliction event because "ice" is a keyword. There are many such examples and this is the central challenge of using this mod.
+> 这意味着说像"终于上来了"这样的词可能会触发"上"发射事件，因为"上"是一个关键词。有很多这样的例子，这是使用此模组的核心挑战。
 
-## Configuration
+## 配置
 
-All keywords can be configured (except of Transmute, which operates a bit differently), all events can be enabled or disabled, and certain aspects of events can be customized.
+所有关键词都可以配置（除了转化事件，它的运作方式略有不同），所有事件都可以启用或禁用，并且可以自定义某些方面的参数。
 
-You can modify the following settings for each event:
+您可以为每个事件修改以下设置：
 
-* **Enabled:** Toggle specific events on or off.
-* **Keywords:** Custom comma-separated lists of trigger words for every event (now includes both English and Chinese keywords by default).
-* **Forces & Durations:** Adjust launch forces, explosion radius, stun durations, and damage percentages.
-* **Specific Toggles:** Enable or disable specific transmutation rules or mechanics.
+* **启用**: 开启或关闭特定事件。
+* **关键词**: 为每个事件自定义以逗号分隔的触发词列表。
+* **力度与持续时间**: 调整发射力度、爆炸半径、眩晕持续时间和伤害百分比。
+* **特定开关**: 启用或禁用特定的变化规则或机制。
 
-The configuration applies only to yourself and what you want to happen to you when you say the keywords.
+配置仅适用于您自己，以及当您说出关键词时想要对自己发生的事情。
 
-## 中文配置 / Chinese Configuration
+## 安装
 
-配置文件已包含中英双语关键词，以支持中文语音识别。您可以在 BepInEx 配置文件中修改或添加中文关键词以自定义您的体验。
+1.  确保已安装BepInEx。
+2.  下载最新版本的VoiceCurseZh。
+3.  将内容提取到游戏的 `BepInEx/plugins` 文件夹中。
+4.  运行一次游戏以生成配置文件。
 
-## Installation
-
-1.  Ensure BepInEx is installed.
-2.  Download the latest release of VoiceCurse.
-3.  Extract the contents into your game's `BepInEx/plugins` folder.
-4.  Run the game once to generate the configuration file.
-
-## Everyone needs to have the mod installed for it to work properly!
-
-## 中文语音支持 / Chinese Voice Support
-
-安装后，您可以直接使用中文语音命令。首次运行游戏后，配置文件将包含中英双语关键词，您可以根据需要进行调整。
+## 每个人都需要安装模组才能正常工作！

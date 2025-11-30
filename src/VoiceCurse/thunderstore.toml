@@ -7,7 +7,7 @@ repository = "https://thunderstore.io"
 [package]
 namespace = "jie65535"
 name = "VoiceCurseZh"
-description = "VoiceCurse mod with Chinese localization support - Makes it so what people are saying can cause things to happen in game."
+description = "VoiceCurse 中文版 - 让玩家说话内容触发游戏事件"
 websiteUrl = "https://github.com/jie65535/voicecurse-peak"
 containsNsfwContent = false
 
